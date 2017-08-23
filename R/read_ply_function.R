@@ -199,7 +199,7 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
     # }
 
   mesh <- list(vb = t(dplyr::select(plymat_vertex, x, y, z, one)),
-               it = dplyr::select(plymat_face, dplyr::contains("vertex_index.") )+1, # C++ starts at index 1
+               it = t(dplyr::select(plymat_face, dplyr::contains("vertex_index.") )+1), # C++ starts at index 1
                primitivetype = "triangle",
                material = material,
                label = plymat_vertex$label,
