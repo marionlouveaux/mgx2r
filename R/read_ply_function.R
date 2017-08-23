@@ -128,6 +128,7 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
   }
 
 test1
+test2
   ##Mesh color
 
   if (length(grep(names(plymat_vertex), pattern = "label")) !=0){
