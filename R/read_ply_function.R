@@ -210,15 +210,17 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
                #label_it2 = label_it2,
                #parent_it = parent_it,
                #cell_nb_it = cell_nb_it,
-               MatLab = plymat_face$it_lab, # MatSig = MatSig, MatPar = MatPar,
+               MatLab = plymat_face$it_lab,
+               # MatSig = MatSig,
+               # MatPar = MatPar,
                orig_ID_it = orig_ID_it)
     #label, signal, parent: on vertices
     #label_it, MatLab, MatSig and MatPar: on triangles (label_it and MatLab give the same info, but MatLab is in RGB hexa code)
 
     class(mesh) <- c("mesh3d", "shape3d")
-    # if (addNormals == TRUE) {
-    #     mesh <- geomorph::addNormals(mesh) # look into rgl or morpho (deprecated)
-    # }
+    if (addNormals == TRUE) {
+        mesh <- rgl::addNormals(mesh)
+    }
 
 	#### Mesh display (with rgl library) ####
     if (ShowSpecimen == TRUE) {
