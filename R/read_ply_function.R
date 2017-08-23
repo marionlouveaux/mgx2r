@@ -127,7 +127,7 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
     # face = face + 1 #face contains triangle ID; ID starts at 0 in C++ and 1 in R
   }
 
-
+test1
   ##Mesh color
 
   if (length(grep(names(plymat_vertex), pattern = "label")) !=0){
