@@ -5,9 +5,10 @@
 #' @param ShowSpecimen Default to TRUE. Display the newly created mesh3D with the chosen color (defined in MatCol).
 #' @param addNormals Default to TRUE.
 #' @param MatCol Default to "signal". Expect either "signal" (fluorescent signal projected on the mesh), "parent" (cell label) or "label" (cell face label). To fill Material$color of mesh 3D.
-#' @param header_max number of lines expected in header. Must be equal or greater to the actual number of lines in the header. Default to 30.
-#' @param my_colors colors for displaying the mesh in an hexadecimal format.
+#' @param header_max Number of lines expected in header. Must be equal or greater to the actual number of lines in the header. Default to 30.
+#' @param my_colors Colors for displaying the mesh in an hexadecimal format.
 #' @importFrom magrittr %>%
+#' @importFrom grDevices rgb
 #' @keywords .ply, read
 #' @export
 #' @examples
@@ -21,7 +22,6 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
                                               "#008000", "#00FF00", "#008080", "#00FFFF",
                                               "#000080", "#0000FF", "#800080", "#FF00FF"))
   {
-
 
 
   #2017-08-01: check function on different meshes (embryo + Soeren meshes)
@@ -86,7 +86,7 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
         tidyr::separate(sep = " ", col = X, into = ppty_faces$Name, convert = TRUE,
                         extra = "drop")
       nb_col_tmp <- ncol(plymat_face_tmp)
-      nb_col_uchar <- plymat_face_tmp[[ Name_i_tmp ]]#added 2017-08-01
+      nb_col_uchar <- plymat_face_tmp[[ Name_i_tmp ]]
 
       if (i+i2 != nrow(ppty_faces)){
 
@@ -138,22 +138,33 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
 
     if (dplyr::summarise_all(vertex_item, class) == "integer"){ # label, parent label, cell number...
 
-      LabCol <- rep(my_colors, length.out = nrow(unique(vertex_item)) )
-      LabCol[which(unique(vertex_item) == -1)] <- "#000000" # change column name each time, or they will be redundancy&PB when calling col_fluoSig below
+      intCol <- rep(my_colors, length.out = nrow(unique(vertex_item)) )
+      intCol[which(unique(vertex_item) == -1)] <- "#000000" # change column name each time, or they will be redundancy&PB when calling col_fluoSig below
 
-      col_corresp <- dplyr::bind_cols(label = unique(vertex_item), LabCol = LabCol)
+      col_corresp <- dplyr::bind_cols(label = unique(vertex_item), intCol = intCol)
       plymat_vertex <- dplyr::left_join(plymat_vertex, col_corresp, by = name_vertex_item)
 
-      plymat_face <- dplyr::mutate_at(plymat_face, dplyr::vars(dplyr::contains("vertex_index.")), dplyr::funs( item = plymat_vertex$LabCol[.] ) )
-      colnames(plymat_face) <- gsub(colnames(plymat_face), pattern = "_item", replacement = paste0("_", name_vertex_item))
+      plymat_face <- dplyr::mutate_at(plymat_face,
+                                      dplyr::vars(dplyr::contains("vertex_index.")),
+                                      dplyr::funs( item = plymat_vertex$intCol[.] ) )
 
+      w.item <- grep(".*_item", colnames(plymat_face))
+      colnames(plymat_face)[w.item] <- paste0("Col_", name_vertex_item, ".", 1:length(w.item))
+
+      colnames(plymat_vertex) <- gsub(colnames(plymat_vertex), pattern = "intCol", replacement = paste0("Col_", name_vertex_item))
     } else { # fluorescent signal
 
-      col_fluoSig <- rgb(dplyr::bind_cols(vertex_item, vertex_item, vertex_item), maxColorValue = max(vertex_item))
-      plymat_vertex <- dplyr::bind_cols(plymat_vertex, col_fluoSig = col_fluoSig) # change column name each time, or they will be redundancy&PB when calling col_fluoSig below
-      plymat_face <- dplyr::mutate_at(plymat_face, dplyr::vars(dplyr::contains("vertex_index.")), dplyr::funs( item = plymat_vertex$col_fluoSig[.] ) )
-      colnames(plymat_face) <- gsub(colnames(plymat_face), pattern = "_item", replacement = paste0("_", name_vertex_item))
-    }
+      elseCol <- rgb(dplyr::bind_cols(vertex_item, vertex_item, vertex_item), maxColorValue = max(vertex_item))
+      plymat_vertex <- dplyr::bind_cols(plymat_vertex, elseCol = elseCol) # change column name each time, or they will be redundancy&PB when calling elseCol below
+      plymat_face <- dplyr::mutate_at(plymat_face,
+                                      dplyr::vars(dplyr::contains("vertex_index.")),
+                                      dplyr::funs( item = plymat_vertex$elseCol[.] ) )
+
+      w.item <- grep(".*_item", colnames(plymat_face))
+      colnames(plymat_face)[w.item] <- paste0("Col_", name_vertex_item, ".", 1:length(w.item))
+
+      colnames(plymat_vertex) <- gsub(colnames(plymat_vertex), pattern = "elseCol", replacement = paste0("Col_", name_vertex_item))
+      }
   }
 
 
@@ -165,7 +176,7 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
     material$specular <- "gray25"
 
     if (MatCol == "label"){
-      material$color <- t(plymat_face2[ , c("vertex_index.1", "vertex_index.2", "vertex_index.3")])
+      material$color <- t(plymat_face[ , c("vertex_index.1", "vertex_index.2", "vertex_index.3")])
 
     }else if (MatCol == "signal"){
         material$color <- plymat_face[ , c("it_sig.1", "it_sig.2", "it_sig.3")]

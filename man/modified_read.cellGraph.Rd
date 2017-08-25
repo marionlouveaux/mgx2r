@@ -7,15 +7,9 @@
 modified_read.cellGraph(cellGraphfile, header_max = 30)
 }
 \arguments{
-\item{file}{.ply file path. The .ply file stores information relative to a triangular mesh created with MorphoGraphX.}
+\item{cellGraphfile}{.ply Cell Graph file.}
 
-\item{ShowSpecimen}{Default to TRUE. Display the newly created mesh3D with the chosen color (defined in MatCol).}
-
-\item{addNormals}{Default to TRUE}
-
-\item{MatCol}{Default to "signal". Expect either "signal" (fluorescent signal projected on the mesh), "parent" (cell label) or "label" (cell face label). To fill Material$color of mesh 3D.}
-
-\item{my_colors}{colors for displaying the mesh in an hexadecimal format}
+\item{header_max}{Number of lines expected in header. Must be equal or greater to the actual number of lines in the header. Default to 30.}
 }
 \value{
 Object of type mesh3D

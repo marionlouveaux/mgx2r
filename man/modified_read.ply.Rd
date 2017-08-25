@@ -18,9 +18,9 @@ modified_read.ply(file, ShowSpecimen = TRUE, addNormals = TRUE,
 
 \item{MatCol}{Default to "signal". Expect either "signal" (fluorescent signal projected on the mesh), "parent" (cell label) or "label" (cell face label). To fill Material$color of mesh 3D.}
 
-\item{header_max}{number of lines expected in header. Must be equal or greater to the actual number of lines in the header. Default to 30.}
+\item{header_max}{Number of lines expected in header. Must be equal or greater to the actual number of lines in the header. Default to 30.}
 
-\item{my_colors}{colors for displaying the mesh in an hexadecimal format.}
+\item{my_colors}{Colors for displaying the mesh in an hexadecimal format.}
 }
 \value{
 Object of type mesh3D
