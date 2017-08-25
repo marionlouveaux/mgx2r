@@ -127,61 +127,35 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
   ##Mesh color
   #- to MAKE IT MORE GENERAL, identify all the items in ppty that could be displayed using a color code
   #- distinguish the discrete ones (fluorescent signal) from the continuous ones?
-  #- give them names according to their original name in ppty
+  #- give them names according to their original name in ppty -- issue with mutate: drops columns
   #- allow user to change material color according to those ppties (after mesh creation?)
 
-    if (length(grep(names(plymat_vertex), pattern = "label")) !=0){
 
-      LabCol <- rep(my_colors, length.out = length(unique(plymat_vertex$label)) )
-      LabCol[which(unique(plymat_vertex$label) == -1)] <- "#000000"
+  all_vertices_items <- dplyr::filter(ppty_vertices, Name != "x" & Name != "y" & Name != "z")
 
-      col_corresp <- dplyr::bind_cols(label = unique(plymat_vertex$label), LabCol = LabCol)
+  for (i in 1:nrow(all_vertices_items)){
+    vertex_item <- plymat_vertex[, all_vertices_items$Name[i]]
+
+    if (dplyr::summarise_all(vertex_item, class) == "integer"){ # label, parent label, cell number...
+
+      LabCol <- rep(my_colors, length.out = nrow(unique(vertex_item)) )
+      LabCol[which(unique(vertex_item) == -1)] <- "#000000"
+
+      col_corresp <- dplyr::bind_cols(label = unique(vertex_item), LabCol = LabCol)
       plymat_vertex2 <- dplyr::left_join(plymat_vertex, col_corresp, by = "label")
 
-      plymat_vertex3 <- dplyr::mutate_at(plymat_face, dplyr::vars(dplyr::contains("vertex_index.")), dplyr::funs( plymat_vertex2$LabCol[.] ) )
-  }
+      plymat_face2 <- dplyr::mutate_at(plymat_face, dplyr::vars(dplyr::contains("vertex_index.")), dplyr::funs( plymat_vertex2$LabCol[.] ) )
 
+    } else { # fluorescent signal
 
-  if (length(grep(names(plymat_vertex), pattern = "signal")) !=0){
-    # fluorescence signal per vertex
-    fluoSig <- plymat_vertex$signal
+      col_fluoSig <- rgb(dplyr::bind_cols(vertex_item, vertex_item, vertex_item), maxColorValue = max(vertex_item)) #maxColorValue = 65535 if 16 bits
+      plymat_vertex2 <- dplyr::bind_cols(plymat_vertex, col_fluoSig = col_fluoSig)
+      plymat_face3 <- dplyr::mutate_at(plymat_face, dplyr::vars(dplyr::contains("vertex_index.")), dplyr::funs( plymat_vertex2$col_fluoSig[.] ) )
 
-    plymat_vertex <- plymat_vertex %>%
-      dplyr::mutate(vb_sig = grey(fluoSig/max(fluoSig)))
-
-    plymat_face <- plymat_face %>% #in which vertex index is replaced by fluoSig
-      dplyr::mutate(it_sig.1 = plymat_vertex$vb_sig[plymat_face$vertex_index.1+1],
-                    it_sig.2 = plymat_vertex$vb_sig[plymat_face$vertex_index.2+1],
-                    it_sig.3 = plymat_vertex$vb_sig[plymat_face$vertex_index.3+1])
-  }
-
-    if (length(grep(names(plymat_vertex), pattern = "parent")) !=0){
-
-        fluoPar_tmp <- plymat_vertex$parent
-        ParCol <- rep(my_colors, length.out = max(plymat_vertex$parent+2) ) #as much colors as parent label levels
-
-        # parent label color per vertex
-        plymat_vertex <- plymat_vertex %>%
-          dplyr::mutate(vb_par = ParCol[parent+2]) %>% #vb_lab: color for each vertex
-          dplyr::arrange(-parent)
-
-        # parent label color per face
-        # plymat_face <- plymat_face %>%
-        #   dplyr::mutate(it_par = ParCol[parent+2]) # does not work: missing parent label per face
-
-        plymat_face <- plymat_face %>% #in which vertex index is replaced by fluoSig
-          dplyr::mutate(it_par.1 = plymat_vertex$vb_par[plymat_face$vertex_index.1+1],
-                        it_par.2 = plymat_vertex$vb_par[plymat_face$vertex_index.2+1],
-                        it_par.3 = plymat_vertex$vb_par[plymat_face$vertex_index.3+1])
     }
-
-    # if (length(grep(names(plymat_vertex), pattern = "cellNr")) !=0){ -- what to do with cellNr?
-    #     cell_nb_tmp <- plymat_vertex$cellNr
-    #     #cell_nb_it <-
-    # }
+  }
 
 
-  ########
   orig_ID_it <- seq(1, nfaces)
 
 
@@ -190,7 +164,7 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
     material$specular <- "gray25"
 
     if (MatCol == "label"){
-      material$color <- rbind(plymat_vertex3$vertex_index.1, plymat_vertex3$vertex_index.2, plymat_vertex3$vertex_index.3)
+      material$color <- t(plymat_face2[ , c("vertex_index.1", "vertex_index.2", "vertex_index.3")])
 
     }else if (MatCol == "signal"){
         material$color <- plymat_face[ , c("it_sig.1", "it_sig.2", "it_sig.3")]
