@@ -28,7 +28,6 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
   # try to make function more general: recognize that data are scalar, tensor, normals... (1,2,3 values)
   # with given data type: always use the same way to read the data/work with it = make it as general as possible
   # look for full 3D mesh (several meshes stuck together?)
-  # create .Rmd (Vignette)
   # document DESCRIPTION
 
   #### Get header ####
@@ -134,24 +133,26 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
   all_vertices_items <- dplyr::filter(ppty_vertices, Name != "x" & Name != "y" & Name != "z")
 
   for (i in 1:nrow(all_vertices_items)){
-    vertex_item <- plymat_vertex[, all_vertices_items$Name[i]]
+    name_vertex_item <- all_vertices_items$Name[i]
+    vertex_item <- plymat_vertex[, name_vertex_item]
 
     if (dplyr::summarise_all(vertex_item, class) == "integer"){ # label, parent label, cell number...
 
       LabCol <- rep(my_colors, length.out = nrow(unique(vertex_item)) )
-      LabCol[which(unique(vertex_item) == -1)] <- "#000000"
+      LabCol[which(unique(vertex_item) == -1)] <- "#000000" # change column name each time, or they will be redundancy&PB when calling col_fluoSig below
 
       col_corresp <- dplyr::bind_cols(label = unique(vertex_item), LabCol = LabCol)
-      plymat_vertex2 <- dplyr::left_join(plymat_vertex, col_corresp, by = "label")
+      plymat_vertex <- dplyr::left_join(plymat_vertex, col_corresp, by = name_vertex_item)
 
-      plymat_face2 <- dplyr::mutate_at(plymat_face, dplyr::vars(dplyr::contains("vertex_index.")), dplyr::funs( plymat_vertex2$LabCol[.] ) )
+      plymat_face <- dplyr::mutate_at(plymat_face, dplyr::vars(dplyr::contains("vertex_index.")), dplyr::funs( item = plymat_vertex$LabCol[.] ) )
+      colnames(plymat_face) <- gsub(colnames(plymat_face), pattern = "_item", replacement = paste0("_", name_vertex_item))
 
     } else { # fluorescent signal
 
-      col_fluoSig <- rgb(dplyr::bind_cols(vertex_item, vertex_item, vertex_item), maxColorValue = max(vertex_item)) #maxColorValue = 65535 if 16 bits
-      plymat_vertex2 <- dplyr::bind_cols(plymat_vertex, col_fluoSig = col_fluoSig)
-      plymat_face3 <- dplyr::mutate_at(plymat_face, dplyr::vars(dplyr::contains("vertex_index.")), dplyr::funs( plymat_vertex2$col_fluoSig[.] ) )
-
+      col_fluoSig <- rgb(dplyr::bind_cols(vertex_item, vertex_item, vertex_item), maxColorValue = max(vertex_item))
+      plymat_vertex <- dplyr::bind_cols(plymat_vertex, col_fluoSig = col_fluoSig) # change column name each time, or they will be redundancy&PB when calling col_fluoSig below
+      plymat_face <- dplyr::mutate_at(plymat_face, dplyr::vars(dplyr::contains("vertex_index.")), dplyr::funs( item = plymat_vertex$col_fluoSig[.] ) )
+      colnames(plymat_face) <- gsub(colnames(plymat_face), pattern = "_item", replacement = paste0("_", name_vertex_item))
     }
   }
 
