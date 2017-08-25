@@ -3,3 +3,4 @@
 export(modified_read.cellGraph)
 export(modified_read.ply)
 import(dplyr)
+importFrom(magrittr,"%>%")

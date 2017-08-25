@@ -7,7 +7,7 @@
 #' @param MatCol Default to "signal". Expect either "signal" (fluorescent signal projected on the mesh), "parent" (cell label) or "label" (cell face label). To fill Material$color of mesh 3D.
 #' @param header_max number of lines expected in header. Must be equal or greater to the actual number of lines in the header. Default to 30.
 #' @param my_colors colors for displaying the mesh in an hexadecimal format.
-#' @import dplyr
+#' @importFrom magrittr %>%
 #' @keywords .ply, read
 #' @export
 #' @examples
@@ -113,17 +113,16 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
   plymat_face <- tibble::tibble( X = readr::read_lines(file = file,
                                                      skip = (headerend + nvertices),
                                                      n_max = nfaces ) ) %>% # faces matrix
-    tidyr::separate(sep = " ", col = X, into = ppty_faces$Name, convert = TRUE)
-
+    tidyr::separate(sep = " ", col = X, into = ppty_faces$Name, convert = TRUE) %>%
+    dplyr::mutate_at(dplyr::vars(dplyr::contains("vertex_index.")), dplyr::funs(. + 1) )
+# vertices index in plymat_face starts at 0, while starting at 1 in R for plymat_vertex.
+# I could add +1 directly in plymat_face here.
 
   #### Mesh material and color ####
   if (yline[3] == 0) { #NB; if zero faces, no def of mesh color? -- check a mesh without faces
     print("Object has zero faces")
   }else{
     print(paste0("Object has ", nrow(plymat_face), " faces and ", nrow(plymat_vertex), " vertices."))
-    #label_it <- dplyr::select(plymat_face, label) # cell face label
-    # face <- dplyr::select(plymat_face, dplyr::contains("vertex_index.") ) #id of vertices describing a given face (here faces are triangles)
-    # face = face + 1 #face contains triangle ID; ID starts at 0 in C++ and 1 in R
   }
 
 
@@ -133,19 +132,56 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
   #- give them names according to their original name in ppty
   #- allow user to change material color according to those ppties (after mesh creation?)
 
-  if (length(grep(names(plymat_vertex), pattern = "label")) !=0){
+  ##- with only one color: material$color <- rep("#800000", length(plymat_face$label)) , some triangles are already missing
+## with a second color for a group of faces only:
+  # material$color <- rep("#000000", length(plymat_face$label))
+  # material$color[which(plymat_face$label == 537)] <- "#800000"
+# I get random triangles coloured instead of a group of triangle from a cell.
+
+  # if (length(grep(names(plymat_vertex), pattern = "label")) !=0){
 # Labels are usually labels of biological cells, or cell faces.
-    LabCol <- rep(my_colors, length.out = max(plymat_vertex$label+2) ) #colors are repeated as much as there is labels.
+    # LabCol <- rep(my_colors, length.out = max(plymat_vertex$label+2) ) #colors are repeated as much as there is labels.
 
-    # label color per vertex - should the vertices with label -1 also get a color?
-    plymat_vertex <- plymat_vertex %>%
-      dplyr::mutate(vb_lab = LabCol[label+2]) %>% #vb_lab: color for each vertex; min label = -1
-      dplyr::arrange(-label)
+    # head(t(col2rgb(LabCol)))
+    # # label color per vertex - should the vertices with label -1 also get a color?
+    # plymat_vertex <- plymat_vertex %>%
+    #   dplyr::mutate(vb_lab = LabCol[label+2]) %>% #vb_lab: color for each vertex; min label = -1
+    #   dplyr::arrange(-label)
 
+    if (length(grep(names(plymat_vertex), pattern = "label")) !=0){
+
+      fluoLab_tmp <- plymat_vertex$label # label for each vertex, = -1 if vertex is on the edge of the cell
+      NrepColLab <- ceiling(max(fluoLab_tmp+2) / length(my_colors)) #ORIG
+      LabColORIG <- rep(my_colors, NrepColLab)[1:max(fluoLab_tmp+2)] #ORIG
+      col_fluoLab <- LabColORIG[fluoLab_tmp+2]
+      face <- plymat_face[, c("vertex_index.1", "vertex_index.2", "vertex_index.3")]
+      MatLab <- matrix(col_fluoLab[face], dim(face))
+
+
+      LabCol <- rep(my_colors, length.out = length(unique(plymat_vertex$label)) )
+
+      LabCol[which(unique(plymat_vertex$label) == -1)] <- "#000000"
+
+      col_corresp <- dplyr::bind_cols(label = unique(plymat_vertex$label), LabCol = LabCol)
+      plymat_vertex2 <- dplyr::left_join(plymat_vertex, col_corresp, by = "label")
+
+      plymat_vertex3 <- dplyr::mutate_at(plymat_face, dplyr::vars(dplyr::contains("vertex_index.")), dplyr::funs( plymat_vertex2$LabCol[.] ) )
+
+
+
+
+     #max(plymat_face$label)
+#       LabCol <- rep(my_colors, length.out = length(unique(plymat_face$label)) ) #colors are repeated as much as there is labels.
+# df <- data.frame(label = unique(plymat_face$label), it_labHEX = LabCol)
+#
+# plymat_face2 <- left_join(plymat_face, df, by = "label")
+
+      # it_labHEX <- apply(t(1:length(plymat_face$label)), 2, function(i){
+      #   LabCol[which(plymat_face$label[i] == unique(plymat_face$label))] # do left join
+      #   })
     # label color per face
-    plymat_face <- plymat_face %>%
-      dplyr::mutate(it_lab = LabCol[label+2]) %>% #it_lab: color for each triangle; min label = -1
-      dplyr::arrange(-label) # arrange do no seem to have any effect
+    # plymat_face <- dplyr::bind_cols(plymat_face, it_labHEX = it_labHEX)  #it_lab: color for each triangle; min label = -1
+      # dplyr::arrange(-label) # arrange do no seem to have any effect
   }
 
 
@@ -197,7 +233,13 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
     material$specular <- "gray25"
 
     if (MatCol == "label"){
-        material$color <- plymat_face$label
+        # material$color <- plymat_face$label
+      # material$color <- rep("#000000", nrow(plymat_face))
+      # material$color[which(plymat_face$label == 537)] <- "#800000"
+      # material$color <- c(plymat_face2$it_labHEX, plymat_face2$it_labHEX, plymat_face2$it_labHEX)
+
+      material$color <- rbind(plymat_vertex3$vertex_index.1, plymat_vertex3$vertex_index.2, plymat_vertex3$vertex_index.3)
+
     }else if (MatCol == "signal"){
         material$color <- plymat_face[ , c("it_sig.1", "it_sig.2", "it_sig.3")]
     }else if (MatCol == "parent"){
@@ -205,7 +247,7 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
     }
 
   mesh <- list(vb = t(dplyr::select(plymat_vertex, x, y, z, one)),
-               it = t(dplyr::select(plymat_face, dplyr::contains("vertex_index.") )+1), # C++ starts at index 1
+               it = t(dplyr::select(plymat_face, dplyr::contains("vertex_index.") )),
                primitivetype = "triangle",
                material = material,
                label = plymat_vertex$label, # make it more general
@@ -216,8 +258,8 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
                #label_it2 = label_it2,
                #parent_it = parent_it,
                #cell_nb_it = cell_nb_it,
-               it_lab = plymat_face$it_lab,
-               it_sig = plymat_face[ , c("it_sig.1", "it_sig.2", "it_sig.3")],
+               #it_lab = plymat_face$it_lab,
+               #it_sig = plymat_face[ , c("it_sig.1", "it_sig.2", "it_sig.3")],
                # MatPar = MatPar,
                orig_ID_it = orig_ID_it)
     #label, signal, parent: on vertices
