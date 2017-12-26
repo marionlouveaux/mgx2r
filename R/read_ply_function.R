@@ -16,17 +16,24 @@
 #' modified_read.ply()
 
 
-# file <- filePly
+file <- filePly
+ShowSpecimen = TRUE
+addNormals = TRUE
+MatCol= 1 # labels
+header_max = 30
+my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
+              "#008000", "#00FF00", "#008080", "#00FFFF",
+              "#000080", "#0000FF", "#800080", "#FF00FF")
 
 ## do test with MatCol = "signal" once "label" is working
 # 2017-12-26 Trying with only two colors:
-# my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
-#               "#008000", "#00FF00", "#008080", "#00FFFF",
-#               "#000080", "#0000FF", "#800080", "#FF00FF")
+
 
 modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
                                MatCol= "label", header_max = 30,
-                               my_colors = c("#800000", "#FF0000"))
+                               my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
+                                             "#008000", "#00FF00", "#008080", "#00FFFF",
+                                             "#000080", "#0000FF", "#800080", "#FF00FF"))
   {
 
 
@@ -167,6 +174,8 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
 
       elseCol <- rgb(dplyr::bind_cols(vertex_item, vertex_item, vertex_item), maxColorValue = max(vertex_item))
       plymat_vertex <- dplyr::bind_cols(plymat_vertex, elseCol = elseCol) # change column name each time, or they will be redundancy&PB when calling elseCol below
+
+# identical code compared to above - merge
       plymat_face <- dplyr::mutate_at(plymat_face,
                                       dplyr::vars(dplyr::contains("vertex_index.")),
                                       dplyr::funs( item = plymat_vertex$elseCol[.] ) )
@@ -183,17 +192,16 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
 
 
 	#### Mesh creation ####
+  if (MatCol > nrow(all_vertices_items) | MatCol < 1){
+    warning(glue::glue("MatCol must be an integer between 1 and {nrow(all_vertices_items)}"))
+  }
+
   material <- NULL
-    material$specular <- "gray25"
+  material$specular <- "gray25"
 
-    if (MatCol == "label"){
-      material$color <- t(plymat_face[ , c("Col_label.1", "Col_label.2", "Col_label.3")])
+  colColors <- grep(glue::glue("Col_", all_vertices_items$Name[MatCol], "."), colnames(plymat_face))
+  material$color <- t(plymat_face[ , colColors])
 
-    }else if (MatCol == "signal"){
-        material$color <- plymat_face[ , c("it_sig.1", "it_sig.2", "it_sig.3")]
-    }else if (MatCol == "parent"){
-        material$color <- plymat_face[ , c("it_par.1", "it_par.2", "it_par.3")]
-    }
 
   mesh <- list(vb = t(dplyr::select(plymat_vertex, x, y, z, one)),
                it = t(dplyr::select(plymat_face, dplyr::contains("vertex_index.") )),
