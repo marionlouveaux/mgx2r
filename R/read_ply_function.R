@@ -4,7 +4,7 @@
 #' @param file .ply file path. The .ply file stores information relative to a triangular mesh created with MorphoGraphX.
 #' @param ShowSpecimen Default to TRUE. Display the newly created mesh3D with the chosen color (defined in MatCol).
 #' @param addNormals Default to TRUE.
-#' @param MatCol Default to "signal". Expect either "signal" (fluorescent signal projected on the mesh), "parent" (cell label) or "label" (cell face label). To fill Material$color of mesh 3D.
+#' @param MatCol Integer. Default to 1, e.g. first element the header which is not x, y or z. To fill Material$color of mesh 3D.
 #' @param header_max Number of lines expected in header. Must be equal or greater to the actual number of lines in the header. Default to 30.
 #' @param my_colors Colors for displaying the mesh in an hexadecimal format.
 #' @importFrom magrittr %>%
@@ -16,17 +16,14 @@
 #' modified_read.ply()
 
 
-file <- filePly
-ShowSpecimen = TRUE
-addNormals = TRUE
-MatCol= 1 # labels
-header_max = 30
-my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
-              "#008000", "#00FF00", "#008080", "#00FFFF",
-              "#000080", "#0000FF", "#800080", "#FF00FF")
-
-## do test with MatCol = "signal" once "label" is working
-# 2017-12-26 Trying with only two colors:
+# file <- filePly
+# ShowSpecimen = TRUE
+# addNormals = TRUE
+# MatCol= 1 # labels
+# header_max = 30
+# my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
+#               "#008000", "#00FF00", "#008080", "#00FFFF",
+#               "#000080", "#0000FF", "#800080", "#FF00FF")
 
 
 modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
@@ -142,7 +139,6 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
   #- give them names according to their original name in ppty -- issue with mutate: drops columns
   #- allow user to change material color according to those ppties (after mesh creation?)
 
-
   all_vertices_items <- dplyr::filter(ppty_vertices, Name != "x" & Name != "y" & Name != "z")
 
   for (i in 1:nrow(all_vertices_items)){
@@ -151,42 +147,31 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
 
     if (dplyr::summarise_all(vertex_item, class) == "integer"){ # label, parent label, cell number...
 
-      ### 2017-12-25: issue with the attribution of colors (colors first attributed to the vertices, then to the triangles, correct vertex ID? reduce the number of colors)
-      intCol <- rep(my_colors, length.out = nrow(unique(vertex_item)) ) # repeat my_colors accross the unique occurences of items
-      intCol[which(unique(vertex_item) == -1)] <- "#000000" # not sure it is necessary
-      # change column name each time, or they will be redundancy&PB when calling col_fluoSig below
+      itemCol <- rep(my_colors, length.out = nrow(unique(vertex_item)) ) # repeat my_colors accross the unique occurences of items
+      itemCol[which(unique(vertex_item) == -1)] <- "#000000" # not sure it is necessary
 
-      col_corresp <- dplyr::bind_cols(label = unique(vertex_item), intCol = intCol)
+      col_corresp <- dplyr::bind_cols(label = unique(vertex_item), itemCol = itemCol)
       plymat_vertex <- dplyr::left_join(plymat_vertex, col_corresp)
-
-      # Associate colors to the triangles
-      plymat_face <- dplyr::mutate_at(plymat_face,
-                                      dplyr::vars(dplyr::contains("vertex_index.")),
-                                      dplyr::funs( item = plymat_vertex$intCol[.] ) )
-
-      w.item <- grep(".*_item", colnames(plymat_face))
-      colnames(plymat_face)[w.item] <- paste0("Col_", name_vertex_item, ".", 1:length(w.item))
-
-      colnames(plymat_vertex) <- gsub(colnames(plymat_vertex), pattern = "intCol", replacement = paste0("Col_", name_vertex_item))
-
 
     } else { # fluorescent signal or other continuous signal
 
-      elseCol <- rgb(dplyr::bind_cols(vertex_item, vertex_item, vertex_item), maxColorValue = max(vertex_item))
-      plymat_vertex <- dplyr::bind_cols(plymat_vertex, elseCol = elseCol) # change column name each time, or they will be redundancy&PB when calling elseCol below
+      itemCol <- rgb(dplyr::bind_cols(vertex_item, vertex_item, vertex_item), maxColorValue = max(vertex_item))
+      plymat_vertex <- dplyr::bind_cols(plymat_vertex, itemCol = itemCol) # change column name each time, or they will be redundancy&PB when calling itemCol below
 
-# identical code compared to above - merge
-      plymat_face <- dplyr::mutate_at(plymat_face,
-                                      dplyr::vars(dplyr::contains("vertex_index.")),
-                                      dplyr::funs( item = plymat_vertex$elseCol[.] ) )
+    }
 
-      w.item <- grep(".*_item", colnames(plymat_face))
-      colnames(plymat_face)[w.item] <- paste0("Col_", name_vertex_item, ".", 1:length(w.item))
+    # Associate colors to the triangles
+    plymat_face <- dplyr::mutate_at(plymat_face,
+                                    dplyr::vars(dplyr::contains("vertex_index.")),
+                                    dplyr::funs( item = plymat_vertex$itemCol[.] ) )
 
-      colnames(plymat_vertex) <- gsub(colnames(plymat_vertex), pattern = "elseCol", replacement = paste0("Col_", name_vertex_item))
-      }
+    w.item <- grep(".*_item", colnames(plymat_face))
+    colnames(plymat_face)[w.item] <- paste0("Col_", name_vertex_item, ".", 1:length(w.item))
+
+    # Rename columns with item name
+    colnames(plymat_vertex) <- gsub(colnames(plymat_vertex), pattern = "itemCol", replacement = paste0("Col_", name_vertex_item))
+
   }
-
 
   orig_ID_it <- seq(1, nfaces)
 
@@ -206,21 +191,9 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
   mesh <- list(vb = t(dplyr::select(plymat_vertex, x, y, z, one)),
                it = t(dplyr::select(plymat_face, dplyr::contains("vertex_index.") )),
                primitivetype = "triangle",
-               material = material) #,
-               # label = plymat_vertex$label, # make it more general
-               # signal = plymat_vertex$signal,
-               # parent = plymat_vertex$parent,
-               # cell_nb = plymat_vertex$cellNr,
-               # label_it = plymat_face$label,
-               # #label_it2 = label_it2,
-               # #parent_it = parent_it,
-               # #cell_nb_it = cell_nb_it,
-               # #it_lab = plymat_face$it_lab,
-               # #it_sig = plymat_face[ , c("it_sig.1", "it_sig.2", "it_sig.3")],
-               # # MatPar = MatPar,
-               # orig_ID_it = orig_ID_it)
-    #label, signal, parent: on vertices
-    #label_it, MatLab, MatSig and MatPar: on triangles (label_it and MatLab give the same info, but MatLab is in RGB hexa code)
+               material = material,
+               allColors = t(plymat_face[ , grep("Col_", colnames(plymat_face))])
+  )
 
     class(mesh) <- c("mesh3d", "shape3d")
     if (addNormals == TRUE) {
