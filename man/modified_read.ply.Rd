@@ -5,7 +5,7 @@
 \title{A reading .ply Function}
 \usage{
 modified_read.ply(file, ShowSpecimen = TRUE, addNormals = TRUE,
-  MatCol = "signal", header_max = 30, my_colors = c("#800000", "#FF0000",
+  MatCol = 1, header_max = 30, my_colors = c("#800000", "#FF0000",
   "#808000", "#FFFF00", "#008000", "#00FF00", "#008080", "#00FFFF", "#000080",
   "#0000FF", "#800080", "#FF00FF"))
 }
@@ -16,7 +16,7 @@ modified_read.ply(file, ShowSpecimen = TRUE, addNormals = TRUE,
 
 \item{addNormals}{Default to TRUE.}
 
-\item{MatCol}{Default to "signal". Expect either "signal" (fluorescent signal projected on the mesh), "parent" (cell label) or "label" (cell face label). To fill Material$color of mesh 3D.}
+\item{MatCol}{Integer. Default to 1, e.g. first element the header which is not x, y or z. To fill Material$color of mesh 3D.}
 
 \item{header_max}{Number of lines expected in header. Must be equal or greater to the actual number of lines in the header. Default to 30.}
 

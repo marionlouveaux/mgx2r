@@ -11,7 +11,7 @@ vignette: >
 
 ## Vignette Info
 
-```{r allData}
+```{r lib}
 library(magrittr)
 ```
 
@@ -31,7 +31,7 @@ fileCellGraph <- paste0(dirData, dirPly, "/test4_cellGraph.ply")
 ```
 
 
-
+Note from 2017-12-26: read_ply_function is clean. I need now to test it on numerous meshes to make it as general as possible.
 
 
 

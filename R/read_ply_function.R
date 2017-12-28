@@ -27,11 +27,11 @@
 
 
 modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
-                               MatCol= "label", header_max = 30,
+                               MatCol= 1, header_max = 30,
                                my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
                                              "#008000", "#00FF00", "#008080", "#00FFFF",
                                              "#000080", "#0000FF", "#800080", "#FF00FF"))
-  {
+{
 
 
   #2017-08-01: check function on different meshes (embryo + Soeren meshes)
@@ -66,62 +66,19 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
   headerend <- grep(c("end_header"), plyhead) #looking for the end of the header
 
   ppty_vertices <- tibble::tibble( X = plyhead[(nline_vertices+1) : (nline_faces-1)] ) %>% # vertices properties in header
-  tidyr::separate(sep = " ", col = X, into = c("Property", "Type", "Name"))
+    tidyr::separate(sep = " ", col = X, into = c("Property", "Type", "Name"))
 
   plymat_vertex <- tibble::tibble( X = readr::read_lines(file = file, skip = headerend, n_max = nvertices) ) %>% # vertices matrix
     tidyr::separate(sep = " ", col = X, into = ppty_vertices$Name, convert = TRUE) %>%
     dplyr::mutate(one = rep(1, nrow(.)))
 
 
-  ppty_faces <- tibble::tibble( X = plyhead[(nline_faces+1) : (headerend-1)] ) %>% # faces properties in header
-    tidyr::separate(sep = " ", col = X, into = c("Property", "Type", "Name", "uchar", "Y"), fill = "right") %>%
-    dplyr::mutate(Type = ifelse(Name == "uchar", uchar, Type),
-           uchar =  ifelse(Name == "uchar", TRUE, FALSE),
-           Name = ifelse(Name == "uchar", Y, Name)) %>%
-    dplyr::select(-Y)
+  plymat_face <- ucharHelp(ppty = plyhead[(nline_faces+1) : (headerend-1)],
+                           file = file,
+                           toSkip = headerend + nvertices,
+                           Nlines = nfaces)
 
-
-  if ( sum(ppty_faces$uchar) != 0 ){ #to get rid of uchar columns in ppty_faces
-    ppty_faces_orig <- ppty_faces
-    index_uchar <- which(ppty_faces_orig$uchar == TRUE)
-
-    i2 <- 0
-    for (i in index_uchar){
-
-      Name_i_tmp <- ppty_faces_orig$Name[i]
-
-      plymat_face_tmp <- tibble::tibble( X = readr::read_lines(file = file,
-                                                         skip = (headerend + nvertices),
-                                                         n_max = 1 ) ) %>%
-        tidyr::separate(sep = " ", col = X, into = ppty_faces$Name, convert = TRUE,
-                        extra = "drop")
-      nb_col_tmp <- ncol(plymat_face_tmp)
-      nb_col_uchar <- plymat_face_tmp[[ Name_i_tmp ]]
-
-      if (i+i2 != nrow(ppty_faces)){
-
-        ppty_name_tmp <- c(ppty_faces$Name[1:(i + i2)],
-                             paste(ppty_faces$Name[i + i2], 1:nb_col_uchar, sep = "."),
-                             ppty_faces$Name[(i + i2 + 1):nrow(ppty_faces)])
-
-        ppty_faces <- ppty_faces[c(1:(i + i2), rep(i + i2, nb_col_uchar),
-                                   ((i + i2 + 1):nb_col_tmp)), ]
-
-      }else{
-        ppty_name_tmp <- c(ppty_faces$Name[1:(i + i2)],
-                             paste(ppty_faces$Name[i + i2], 1:nb_col_tmp, sep = ".") )
-
-        ppty_faces <- ppty_faces[c(1:(i+i2), rep(i+i2, nb_col_tmp)), ]
-      }
-      ppty_faces$Name <- ppty_name_tmp
-      i2 <- i2 + nb_col_tmp
-    }
-  }
-
-  plymat_face <- tibble::tibble( X = readr::read_lines(file = file,
-                                                     skip = (headerend + nvertices),
-                                                     n_max = nfaces ) ) %>% # faces matrix
-    tidyr::separate(sep = " ", col = X, into = ppty_faces$Name, convert = TRUE) %>%
+  plymat_face <- plymat_face %>%
     dplyr::mutate_at(dplyr::vars(dplyr::contains("vertex_index.")), dplyr::funs(. + 1) )
 
 
@@ -176,7 +133,7 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
   orig_ID_it <- seq(1, nfaces)
 
 
-	#### Mesh creation ####
+  #### Mesh creation ####
   if (MatCol > nrow(all_vertices_items) | MatCol < 1){
     warning(glue::glue("MatCol must be an integer between 1 and {nrow(all_vertices_items)}"))
   }
@@ -195,24 +152,24 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
                allColors = t(plymat_face[ , grep("Col_", colnames(plymat_face))])
   )
 
-    class(mesh) <- c("mesh3d", "shape3d")
-    if (addNormals == TRUE) {
-        mesh <- rgl::addNormals(mesh)
-    }
+  class(mesh) <- c("mesh3d", "shape3d")
+  if (addNormals == TRUE) {
+    mesh <- rgl::addNormals(mesh)
+  }
 
-	#### Mesh display (with rgl library) ####
-    if (ShowSpecimen == TRUE) {
-        rgl::clear3d()
-        if (nfaces == 0) {
-            rgl::dot3d(mesh) # needs to look for vertex color only
-        }
-        if (length(material) != 0) {
-            rgl::shade3d(mesh)
-        }else{
-          # rgl::shade3d(mesh, color = "gray") # should I include a default case without color?
-          rgl::shade3d(mesh, color = MatCol)
-        }
+  #### Mesh display (with rgl library) ####
+  if (ShowSpecimen == TRUE) {
+    rgl::clear3d()
+    if (nfaces == 0) {
+      rgl::dot3d(mesh) # needs to look for vertex color only
     }
+    if (length(material) != 0) {
+      rgl::shade3d(mesh)
+    }else{
+      # rgl::shade3d(mesh, color = "gray") # should I include a default case without color?
+      rgl::shade3d(mesh, color = MatCol)
+    }
+  }
 
-    return(mesh)
+  return(mesh)
 }

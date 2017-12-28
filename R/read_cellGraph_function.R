@@ -1,7 +1,7 @@
 #' A reading .ply Function
 #'
 #' This function is a modified version of read.ply function from geomorph R package to specifically read MGX ply files.
-#' @param cellGraphfile .ply Cell Graph file.
+#' @param fileCellGraph .ply Cell Graph file.
 #' @param header_max Number of lines expected in header. Must be equal or greater to the actual number of lines in the header. Default to 30.
 #' @keywords .ply, read
 #' @export
@@ -10,13 +10,14 @@
 #' @return Object of type mesh3D
 #' modified_read.ply()
 
+# fileCellGraph <- fileCellGraph
+# header_max = 30
 
-
-modified_read.cellGraph <- function (cellGraphfile, header_max = 30)
-  {
+modified_read.cellGraph <- function (fileCellGraph, header_max = 30)
+{
 
   #Read only chunk corresponding to header
-  plyhead <- scan(file = cellGraphfile, what = "char", sep = "\n", strip.white = TRUE,
+  plyhead <- scan(file = fileCellGraph, what = "char", sep = "\n", strip.white = TRUE,
                   quiet = TRUE, comment.char = "", multi.line = FALSE, n = header_max)
 
   is.ply <- grep("ply", plyhead)
@@ -35,52 +36,42 @@ modified_read.cellGraph <- function (cellGraphfile, header_max = 30)
 
   nline_faces <- grep(c("element edge"), plyhead)
   yline <- unlist(strsplit( plyhead[nline_faces] , " "))
-  nfaces <- as.numeric(yline[grep(c("face"), yline) + 1]) #number of (triangular) faces
+  nfaces <- as.numeric(yline[grep(c("edge"), yline) + 1]) #number of (triangular) faces
 
   headerend <- grep(c("end_header"), plyhead) #looking for the end of the header
 
+
+  #### 2017-12-26:Test if properties are scalar, vector... (= number of elements is 1, 2, 3...)
+  # Also test if property is a number or a character (it could be an attribute such as "boundary_region")
+  # Take the property name as variable name
+  # propose maps of this/these properties (shiny app?)
+  # propose extra measurements based on these properties -> generic ones? or just a way to combine all the data in a table?
+  # propose data frames with all the measurements? one line per cell?
+
   ppty_vertices <- plyhead[(nline_vertices+1) : (nline_faces-1)]
 
-  # x, y, z coordinates of the vertices
-  x <- grep(c(" x"), ppty_vertices)
-  y <- grep(c(" y"), ppty_vertices)
-  z <- grep(c(" z"), ppty_vertices)
-  # other properties of the vertices
-  label <- grep(c("label"), ppty_vertices)
-  Area <- grep(c("/Geometry/Area"), ppty_vertices)
-  Asp_ratio_geom <- grep(c("/Geometry/Aspect Ratio"), ppty_vertices)
-  Neighbors <- grep(c("Geometry/Neighbors"), ppty_vertices)
-  Perimeter <- grep(c("/Geometry/Perimeter"), ppty_vertices)
-  Circularity <- grep(c("/Lobyness/Circularity"), ppty_vertices)
-  Signal <- grep(c("/Geometry/Signal"), ppty_vertices)
-  ConvexityArea <- grep(c("/Lobyness/Convexity Area"), ppty_vertices)
-  ConvexityPerim <- grep(c("/Lobyness/Convexity Perimeter"), ppty_vertices)
-  LES <- grep(c("/Lobyness/Largest Empty Space"), ppty_vertices)
-  Pavement <- grep(c("/Lobyness/Visibility Pavement"), ppty_vertices)
-  Asp_ratio <- grep(c("/AspectRatio"), ppty_vertices)
+  for (i in grep(".*/.*[[:blank:]]", ppty_vertices)){
+    testSlash <- gregexpr("/", ppty_vertices[i])
+    testBlank <- gregexpr("[[:blank:]]", ppty_vertices[i], perl = TRUE)
+    for (b in testBlank[[1]]){
+      if (b > max(testSlash[[1]])){
+        substr(ppty_vertices[i], start = b, stop = b) <- "_" # only the blanks after the last slash
+      }
+    }
+  }
+
+  ppty_vertices <-  gsub("(?!-)[[:punct:]]", replacement = "", perl = TRUE, ppty_vertices)
 
 
-  nface <- as.numeric(yline[grep(c("face"), yline) + 1]) #number of (triangular) faces
+  plymat_vertices <- ucharHelp(ppty = ppty_vertices,
+                               file = fileCellGraph,
+                               toSkip = headerend,
+                               Nlines = nvertices)
 
-  plymat_vertex <-  scan(file = cellGraphfile, what = list(label = numeric(), x = numeric(), y = numeric(),
-                                                  z = numeric(), Area = numeric(), Asp_ratio_geom = numeric(),
-                                                  Neighbors = numeric(), Perimeter = numeric(), Signal = numeric(),
-                                                  Circularity = numeric(), ConvexityArea = numeric(), ConvexityPerim = numeric(),
-                                                  LES = numeric(), Pavement = numeric(), AR0 = numeric(),
-                                                  AR1 = numeric(), AR2 = numeric(), AR3 = numeric(),
-                                                  AR4 = numeric(), AR5 = numeric(), AR6 = numeric(),
-                                                  AR7 = numeric(), AR8 = numeric(), AR9 = numeric() ),
-                         #sep = "\n", #strip.white = TRUE,
-                         quiet = TRUE,
-                         skip = headerend, nmax = nvertices)
-
-
-  plymat_face <- scan(file = cellGraphfile,
-                      #sep = "\n", strip.white = TRUE,
-                      what = list(cell1 = integer(), cell2 = integer()),
-                      quiet = TRUE, comment.char = "", multi.line = FALSE,
-                      skip = headerend + nvertices, nmax = nfaces)
-
+  plymat_faces <- ucharHelp(ppty = plyhead[(nline_faces+1):(headerend-1)],
+                           file = fileCellGraph,
+                           toSkip = headerend + nvertices,
+                           Nlines = nfaces)
 }
 
 

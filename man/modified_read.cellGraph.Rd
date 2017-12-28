@@ -4,10 +4,10 @@
 \alias{modified_read.cellGraph}
 \title{A reading .ply Function}
 \usage{
-modified_read.cellGraph(cellGraphfile, header_max = 30)
+modified_read.cellGraph(fileCellGraph, header_max = 30)
 }
 \arguments{
-\item{cellGraphfile}{.ply Cell Graph file.}
+\item{fileCellGraph}{.ply Cell Graph file.}
 
 \item{header_max}{Number of lines expected in header. Must be equal or greater to the actual number of lines in the header. Default to 30.}
 }

@@ -3,6 +3,7 @@
 export(mesh3D2ply_clust)
 export(modified_read.cellGraph)
 export(modified_read.ply)
+export(ucharHelp)
 import(dplyr)
 importFrom(grDevices,rgb)
 importFrom(magrittr,"%>%")
