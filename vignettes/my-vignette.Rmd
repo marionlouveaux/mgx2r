@@ -52,7 +52,7 @@ myMesh$material$color <- myMesh$allColors$Col_signal
 #rgl::shade3d(myMesh)
 ```
 
-
+Information relative to cells and cell walls (resp. vertices and edges of the cell graph) are stored into two dataframes and combined into a list:
 ```{r readCellGraph, eval=FALSE}
 myCellGraph <- MorphoGraphX2R::modified_read.cellGraph(fileCellGraph = fileCellGraph, header_max = 30)
 ```

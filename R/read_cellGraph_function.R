@@ -72,6 +72,8 @@ modified_read.cellGraph <- function (fileCellGraph, header_max = 30)
                            file = fileCellGraph,
                            toSkip = headerend + nvertices,
                            Nlines = nfaces)
+
+  list(vertices = plymat_vertices, edges = plymat_faces)
 }
 
 
