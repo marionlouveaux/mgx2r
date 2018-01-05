@@ -5,8 +5,10 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## Vignette Info
@@ -32,6 +34,28 @@ fileCellGraph <- paste0(dirData, dirPly, "/test4_cellGraph.ply")
 
 
 Note from 2017-12-26: read_ply_function is clean. I need now to test it on numerous meshes to make it as general as possible.
+2017-12-28: read_cellGraph looks clean as well. I need to extract the dataframes from edges and vertices properties.
+
+
+
+```{r readPly}
+myMesh <- MorphoGraphX2R::modified_read.ply(file = filePly, ShowSpecimen = TRUE, addNormals = TRUE,
+                               MatCol= 1, header_max = 30,
+                               my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
+                                             "#008000", "#00FF00", "#008080", "#00FFFF",
+                                             "#000080", "#0000FF", "#800080", "#FF00FF"))
+```
+
+To change mesh color and display the new color:
+```{r modifColor, eval=FALSE}
+myMesh$material$color <- myMesh$allColors$Col_signal
+#rgl::shade3d(myMesh)
+```
+
+
+```{r readCellGraph, eval=FALSE}
+myCellGraph <- MorphoGraphX2R::modified_read.cellGraph(fileCellGraph = fileCellGraph, header_max = 30)
+```
 
 
 

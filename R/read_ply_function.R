@@ -144,12 +144,19 @@ modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
   colColors <- grep(glue::glue("Col_", all_vertices_items$Name[MatCol], "."), colnames(plymat_face))
   material$color <- t(plymat_face[ , colColors])
 
+  # iterate on all items toget all colors as a list to store in allcolors
+  res.allColors <- purrr::map(.x = 1:length(all_vertices_items$Name), .f = function(.x){
+    colColors <- grep(glue::glue("Col_", all_vertices_items$Name[.x], "."), colnames(plymat_face))
+    t(plymat_face[ , colColors])
+  })
+names(res.allColors) <- paste0("Col_", all_vertices_items$Name)
+
 
   mesh <- list(vb = t(dplyr::select(plymat_vertex, x, y, z, one)),
                it = t(dplyr::select(plymat_face, dplyr::contains("vertex_index.") )),
                primitivetype = "triangle",
                material = material,
-               allColors = t(plymat_face[ , grep("Col_", colnames(plymat_face))])
+               allColors = res.allColors
   )
 
   class(mesh) <- c("mesh3d", "shape3d")

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Marion Louveaux" />
 
-<meta name="date" content="2017-12-28" />
+<meta name="date" content="2018-01-05" />
 
 <title>Vignette MorphoGraphX2R</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Vignette MorphoGraphX2R</h1>
 <h4 class="author"><em>Marion Louveaux</em></h4>
-<h4 class="date"><em>2017-12-28</em></h4>
+<h4 class="date"><em>2018-01-05</em></h4>
 
 
 
@@ -84,7 +84,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 filePly &lt;-<span class="st"> </span><span class="kw">paste0</span>(dirData, dirPly, <span class="st">&quot;/test4.ply&quot;</span>)
 fileCellGraph &lt;-<span class="st"> </span><span class="kw">paste0</span>(dirData, dirPly, <span class="st">&quot;/test4_cellGraph.ply&quot;</span>)</code></pre></div>
-<p>Note from 2017-12-26: read_ply_function is clean. I need now to test it on numerous meshes to make it as general as possible.</p>
+<p>Note from 2017-12-26: read_ply_function is clean. I need now to test it on numerous meshes to make it as general as possible. 2017-12-28: read_cellGraph looks clean as well. I need to extract the dataframes from edges and vertices properties.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myMesh &lt;-<span class="st"> </span>MorphoGraphX2R<span class="op">::</span><span class="kw">modified_read.ply</span>(<span class="dt">file =</span> filePly, <span class="dt">ShowSpecimen =</span> <span class="ot">TRUE</span>, <span class="dt">addNormals =</span> <span class="ot">TRUE</span>,
+                               <span class="dt">MatCol=</span> <span class="dv">1</span>, <span class="dt">header_max =</span> <span class="dv">30</span>,
+                               <span class="dt">my_colors =</span> <span class="kw">c</span>(<span class="st">&quot;#800000&quot;</span>, <span class="st">&quot;#FF0000&quot;</span>, <span class="st">&quot;#808000&quot;</span>, <span class="st">&quot;#FFFF00&quot;</span>,
+                                             <span class="st">&quot;#008000&quot;</span>, <span class="st">&quot;#00FF00&quot;</span>, <span class="st">&quot;#008080&quot;</span>, <span class="st">&quot;#00FFFF&quot;</span>,
+                                             <span class="st">&quot;#000080&quot;</span>, <span class="st">&quot;#0000FF&quot;</span>, <span class="st">&quot;#800080&quot;</span>, <span class="st">&quot;#FF00FF&quot;</span>))</code></pre></div>
+<pre><code>## [1] &quot;Object has 17051 faces and 8930 vertices.&quot;</code></pre>
+<pre><code>## Joining, by = &quot;label&quot;</code></pre>
+<pre><code>## Joining, by = &quot;parent&quot;</code></pre>
+<pre><code>## Joining, by = &quot;cellNr&quot;</code></pre>
+<p>To change mesh color and display the new color:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myMesh<span class="op">$</span>material<span class="op">$</span>color &lt;-<span class="st"> </span>myMesh<span class="op">$</span>allColors<span class="op">$</span>Col_signal
+<span class="co">#rgl::shade3d(myMesh)</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myCellGraph &lt;-<span class="st"> </span>MorphoGraphX2R<span class="op">::</span><span class="kw">modified_read.cellGraph</span>(<span class="dt">fileCellGraph =</span> fileCellGraph, <span class="dt">header_max =</span> <span class="dv">30</span>)</code></pre></div>
 </div>
 
 
