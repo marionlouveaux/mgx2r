@@ -57,5 +57,49 @@ Information relative to cells and cell walls (resp. vertices and edges of the ce
 myCellGraph <- MorphoGraphX2R::modified_read.cellGraph(fileCellGraph = fileCellGraph, header_max = 30)
 ```
 
+How to display info on a 3D rgl graph:
+
+```{r map, eval=FALSE}
+
+```
+
+- list of attributes needed: 
+    *area--
+    *Gaussian curvature, ---
+    *principal dir of curv---
+    *cell aspect ratio--
+    *number of neighbours--
+
+    *growth rate
+    *growth direction
+    *growth anisotropy
+    
+    *region
+    *lineage
+    *timepoint
+- Export cellGraphs for each timepoint with all needed attributes
+- Maps to do:
+  - regions (custom label)
+  - area
+  - gaussian curvature
+  - principal directions of curvature
+  - growth rates
+  - growth directions
+  - cell aspect ratio
+  - clonal origin (integration of all lineage maps from previous timepoints)
+- Histogram of number of neighbours
+- Boxplots
+  - area
+  - growth rate
+  - growth anisotropy 
+- PCA (area, growth rate, cell aspect ratio, growth anisotropy, sign of Gauss curv, curv anisotropy, abs value of Gauss curv, nb of neigh, localisation of cells = region)
+- Barplot of the mitotic index (nb of div/non dividing cells)
+
+
+
+
+
+
+
 
 
