@@ -156,7 +156,8 @@ names(res.allColors) <- paste0("Col_", all_vertices_items$Name)
                it = t(dplyr::select(plymat_face, dplyr::contains("vertex_index.") )),
                primitivetype = "triangle",
                material = material,
-               allColors = res.allColors
+               allColors = res.allColors,
+               it_label = dplyr::select(plymat_face,label)
   )
 
   class(mesh) <- c("mesh3d", "shape3d")
