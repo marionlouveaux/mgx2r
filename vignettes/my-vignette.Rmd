@@ -14,6 +14,7 @@ editor_options:
 ## Extra librairies
 
 ```{r lib}
+library(MorphoGraphX2R)
 library(magrittr)
 library(dplyr)
 library(plotly)
@@ -28,10 +29,15 @@ dirData <- "/Users/mlouveaux/Documents/Postdoc/Projects/MGX-R bridge/MorphoGraph
 
 We select one .ply as example.
 ```{r myData}
-dirPly <- "/2017-02-15_ply_files"
+# dirPly <- "/2017-02-15_ply_files"
+# 
+# filePly <- paste0(dirData, dirPly, "/test4.ply")
+# fileCellGraph <- paste0(dirData, dirPly, "/test4_cellGraph.ply")
 
-filePly <- paste0(dirData, dirPly, "/test4.ply")
-fileCellGraph <- paste0(dirData, dirPly, "/test4_cellGraph.ply")
+dirPly <- "/Louveaux_PhD/2013-02-12_LTi6B_dis_A"
+
+filePly <- paste0(dirData, dirPly, "/normalMesh/2013-02-12_LTi6B_dis_A_T0_cells_minW1_normalMesh.ply")
+fileCellGraph <- paste0(dirData, dirPly, "/cellGraph_and_normalMeshV2/2013-02-12_LTi6B_dis_A_T0_cells_minW1_cellGraph.ply")
 
 ```
 
@@ -39,11 +45,11 @@ fileCellGraph <- paste0(dirData, dirPly, "/test4_cellGraph.ply")
 Note from 2017-12-26: read_ply_function is clean. I need now to test it on numerous meshes to make it as general as possible.
 
 
-## Mesh
+## Mesh and cell graph (e.g. cells and edges properties)
 
 ```{r readPly}
 # N.B. to check mesh: put rgl viz out of modified_read.ply
-myMesh <- MorphoGraphX2R::modified_read.ply(file = filePly, ShowSpecimen = TRUE, addNormals = TRUE,
+myMesh <- modified_read.ply(file = filePly, ShowSpecimen = TRUE, addNormals = TRUE,
                                MatCol= 1, header_max = 30,
                                my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
                                              "#008000", "#00FF00", "#008080", "#00FFFF",
@@ -58,7 +64,7 @@ myMesh$material$color <- myMesh$allColors$Col_signal
 
 Information relative to cells and cell walls (resp. vertices and edges of the cell graph) are stored into two dataframes and combined into a list:
 ```{r readCellGraph, eval=FALSE}
-myCellGraph <- MorphoGraphX2R::modified_read.cellGraph(fileCellGraph = fileCellGraph, header_max = 30)
+myCellGraph <- modified_read.cellGraph(fileCellGraph = fileCellGraph, header_max = 30)
 ```
 
 
@@ -66,71 +72,131 @@ myCellGraph <- MorphoGraphX2R::modified_read.cellGraph(fileCellGraph = fileCellG
 ## Displaying the mesh with plotly
 ```{r}
 plotlyMesh <- function(meshExample,
-                       meshColors = meshExample$allColors$Col_label,
+                       meshColors = NULL,
                        meshCellcenter = NULL){
-  if (is.null(nrow(meshColors))>1){
-color <- NULL
-for (i in 1:ncol(meshColors)){
-color[i] <-  setdiff(unique(meshColors[,i]), "#000000") # here I remove black vertices
-} # to be more general, remove any color shared by two vertices
+  if (!is.null(nrow(meshColors)) && ncol(meshColors)>1){
+    color <- NULL
+    for (i in 1:ncol(meshColors)){
+      color[i] <-  setdiff(unique(meshColors[,i]), "#000000") # here I remove black vertices
+    } # to be more general, remove any color shared by two vertices
   }else{
-  color <- meshColors
-}
-
-trace2 <- list(type="mesh3d",
-                x = meshExample$vb[1,],
-                y = meshExample$vb[2,],
-                z = meshExample$vb[3,],
-                i = meshExample$it[1,]-1, # NB indices start at 0
-                j = meshExample$it[2,]-1,
-                k = meshExample$it[3,]-1,
-               facecolor = color #one color per triangle (not per biological cell)
-)
-#facecolor: one color per triangle (e.g. length(facecolor) == length(i))
-
-# data <- list(trace2)
-
-layout <- list(
-  scene = list(
-    xaxis = list(
-      backgroundcolor = "rgb(230,230,230)", 
-      gridcolor = "rgb(255,255,255)", 
-      showbackground = TRUE, 
-      zerolinecolor = "rgb(255,255,255)"
-    ), 
-    yaxis = list(
-      backgroundcolor = "rgb(230,230,230)", 
-      gridcolor = "rgb(255,255,255)", 
-      showbackground = TRUE, 
-      zerolinecolor = "rgb(255,255,255)"
-    ), 
-    zaxis = list(
-      backgroundcolor = "rgb(230,230,230)", 
-      gridcolor = "rgb(255,255,255)", 
-      showbackground = TRUE, 
-      zerolinecolor = "rgb(255,255,255)"
-    )
-  ), 
-  title = "My mesh", 
-  xaxis = list(title = "m[, 1]"), 
-  yaxis = list(title = "m[, 2]")
-)
-
-p <- plot_ly()
-p <- add_trace(p, x=trace2$x, y=trace2$y, z=trace2$z,
-                  facecolor=trace2$facecolor,
-               i=trace2$i, j=trace2$j, k=trace2$k, type=trace2$type)
-if (!is.null(meshCellcenter)){
-p <- add_markers(p, x = meshCellcenter$x,
-                y = meshCellcenter$y,
-                z = meshCellcenter$z,
-                marker=list(symbol = 'circle', sizemode="diameter", sizeref = 0.01),
-                sizes = c(0.0005, 0.0005)) ## PB with size!!!
+    if (is.null(meshColors)){
+      color <- rep("#00FFFF", ncol(myMesh$it))
+    }else{
+      color <- meshColors
+    }
   }
-p <- layout(p, scene=layout$scene, title=layout$title, xaxis=layout$xaxis, yaxis=layout$yaxis)
-
-p
+  
+  trace2 <- list(type="mesh3d",
+                 x = meshExample$vb[1,],
+                 y = meshExample$vb[2,],
+                 z = meshExample$vb[3,],
+                 i = meshExample$it[1,]-1, # NB indices start at 0
+                 j = meshExample$it[2,]-1,
+                 k = meshExample$it[3,]-1,
+                 facecolor = color #one color per triangle (not per biological cell)
+  )
+  #facecolor: one color per triangle (e.g. length(facecolor) == length(i))
+  
+  trace4 <- list(
+    x = c(100,1,200),
+    y = c(200,1,1),
+    z = c(1,500,3),
+    marker = list(
+      autocolorscale = FALSE,
+      cmax = 2.5,
+      cmin = 0,
+      colorbar = list(
+        x = 1.2,
+        y = 0.5,
+        len = 0.3,
+        thickness = 15,
+        tickfont = list(size = 12),
+        titlefont = list(size = 20)
+      ),
+      colorscale = list(
+        c(0, "#800026"),
+        list(0.2, "#bd0026"),
+        list(0.24, "#e31a1c"),
+        list(0.28, "#fc4e2a"),
+        list(0.32, "#fd8d3c"),
+        list(0.36, "#feb24c"),
+        list(0.4, "#ffffe5"),
+        list(0.44, "#d9f0a3"),
+        list(0.48, "#addd8e"),
+        list(0.52, "#78c679"),
+        list(0.56, "#41ab5d"),
+        list(0.6, "#238443"),
+        list(0.64, "#41b6c4"),
+        list(0.8, "#225ea8"),
+        list(1, "#081d58")
+      ),
+      line = list(width = 0),
+      opacity = 0.9,
+      showscale = TRUE,
+      size = 20,
+      symbol = "circle"
+    ),
+    mode = "markers",
+    opacity = 0,
+    type = "scatter3d"
+  )
+  
+  layout <- list(
+    scene = list(
+      xaxis = list(
+        backgroundcolor = "rgb(230,230,230)", 
+        gridcolor = "rgb(255,255,255)", 
+        showbackground = TRUE, 
+        zerolinecolor = "rgb(255,255,255)"
+      ), 
+      yaxis = list(
+        backgroundcolor = "rgb(230,230,230)", 
+        gridcolor = "rgb(255,255,255)", 
+        showbackground = TRUE, 
+        zerolinecolor = "rgb(255,255,255)"
+      ), 
+      zaxis = list(
+        backgroundcolor = "rgb(230,230,230)", 
+        gridcolor = "rgb(255,255,255)", 
+        showbackground = TRUE, 
+        zerolinecolor = "rgb(255,255,255)"
+      )
+    ), 
+    title = "My mesh", 
+    xaxis = list(title = "m[, 1]"), 
+    yaxis = list(title = "m[, 2]")
+  )
+  
+  p <- plot_ly()
+  p <- add_trace(p, x=trace2$x, y=trace2$y, z=trace2$z,
+                 facecolor=trace2$facecolor,
+                 i=trace2$i, j=trace2$j, k=trace2$k, type=trace2$type)
+  
+  p <- add_trace(p, x=trace2$x, y=trace2$y, z=trace2$z,
+    marker = trace4$marker,
+    mode = trace4$mode,
+    opacity = trace4$opacity,
+    type = trace4$type)
+  
+  if (!is.null(meshCellcenter)){
+    p <- add_markers(p, x = meshCellcenter$x,
+                     y = meshCellcenter$y,
+                     z = meshCellcenter$z,
+                     marker=list(symbol = 'circle', sizemode="diameter", sizeref = 0.01),
+                     sizes = c(0.0005, 0.0005) ## PB with size!!!
+    ) 
+  }
+  p <- layout(p, scene=layout$scene, title=layout$title, xaxis=layout$xaxis, yaxis=layout$yaxis)
+  
+  p
 }
+```
+
+To display the mesh with cell labels:
+```{r map3D, eval=FALSE}
+plotlyMesh(meshExample = myMesh,
+           meshColors = myMesh$allColors$Col_label)
 ```
 
 
@@ -138,14 +204,20 @@ p
 ## Displaying specific info from cellGraph on the mesh
 
 ### Scalar info (area, growth rate...)
-```{r map3D, eval=FALSE}
+```{r heatmap3D, eval=FALSE}
 plotlyMesh(meshExample = myMesh, 
-           meshColors = left_join(myMesh$it_label, myCellGraph$vertices)$GeometryArea,
-           meshCellcenter = myCellGraph$vertices[,c("x", "y", "z")])
+           meshColors = left_join(myMesh$it_label, myCellGraph$vertices) %>% select(., GeometryArea) %>% t(.),
+           meshCellcenter = NULL)
 ```
 
 
 ### Vector/tensor info (principal dir of curv...)
+
+```{r heatmap3D, eval=FALSE}
+plotlyMesh(meshExample = myMesh, 
+           meshColors = NULL,
+           meshCellcenter = myCellGraph$vertices[,c("x", "y", "z")])
+```
 
 - list of attributes needed: 
     *area--
