@@ -12,7 +12,7 @@
 
 <meta name="author" content="Marion Louveaux" />
 
-<meta name="date" content="2018-01-05" />
+<meta name="date" content="2018-02-26" />
 
 <title>Vignette MorphoGraphX2R</title>
 
@@ -70,17 +70,26 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Vignette MorphoGraphX2R</h1>
 <h4 class="author"><em>Marion Louveaux</em></h4>
-<h4 class="date"><em>2018-01-05</em></h4>
+<h4 class="date"><em>2018-02-26</em></h4>
 
 
 
 <div id="vignette-info" class="section level2">
 <h2>Vignette Info</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(magrittr)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(magrittr)
+<span class="kw">library</span>(dplyr)</code></pre></div>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
 <p>All .ply demonstration data are stored in /inst/extdata.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dirData &lt;-<span class="st"> &quot;/Users/mlouveaux/Documents/Postdoc/Projects/MGX-R bridge/MorphoGraphX2R/inst/extdata/&quot;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dirData &lt;-<span class="st"> &quot;/Users/mlouveaux/Documents/Postdoc/Projects/MGX-R bridge/MorphoGraphX2R/inst/extdata&quot;</span></code></pre></div>
 <p>We select one .ply as example.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dirPly &lt;-<span class="st"> &quot;2017-02-15_ply_files&quot;</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dirPly &lt;-<span class="st"> &quot;/2017-02-15_ply_files&quot;</span>
 
 filePly &lt;-<span class="st"> </span><span class="kw">paste0</span>(dirData, dirPly, <span class="st">&quot;/test4.ply&quot;</span>)
 fileCellGraph &lt;-<span class="st"> </span><span class="kw">paste0</span>(dirData, dirPly, <span class="st">&quot;/test4_cellGraph.ply&quot;</span>)</code></pre></div>
@@ -97,7 +106,142 @@ fileCellGraph &lt;-<span class="st"> </span><span class="kw">paste0</span>(dirDa
 <p>To change mesh color and display the new color:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myMesh<span class="op">$</span>material<span class="op">$</span>color &lt;-<span class="st"> </span>myMesh<span class="op">$</span>allColors<span class="op">$</span>Col_signal
 <span class="co">#rgl::shade3d(myMesh)</span></code></pre></div>
+<p>Information relative to cells and cell walls (resp. vertices and edges of the cell graph) are stored into two dataframes and combined into a list:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myCellGraph &lt;-<span class="st"> </span>MorphoGraphX2R<span class="op">::</span><span class="kw">modified_read.cellGraph</span>(<span class="dt">fileCellGraph =</span> fileCellGraph, <span class="dt">header_max =</span> <span class="dv">30</span>)</code></pre></div>
+<p>How to display info on a 3D rgl graph:</p>
+<ul>
+<li><p>list of attributes needed: <em>area– </em>Gaussian curvature, — <em>principal dir of curv— </em>cell aspect ratio– *number of neighbours–</p>
+<p><em>growth rate </em>growth direction *growth anisotropy</p>
+<em>region </em>lineage *timepoint</li>
+<li>Export cellGraphs for each timepoint with all needed attributes</li>
+<li>Maps to do:</li>
+<li>regions (custom label)</li>
+<li>area</li>
+<li>gaussian curvature</li>
+<li>principal directions of curvature</li>
+<li>growth rates</li>
+<li>growth directions</li>
+<li>cell aspect ratio</li>
+<li>clonal origin (integration of all lineage maps from previous timepoints)</li>
+<li>Histogram of number of neighbours</li>
+<li>Boxplots</li>
+<li>area</li>
+<li>growth rate</li>
+<li>growth anisotropy</li>
+<li>PCA (area, growth rate, cell aspect ratio, growth anisotropy, sign of Gauss curv, curv anisotropy, abs value of Gauss curv, nb of neigh, localisation of cells = region)</li>
+<li><p>Barplot of the mitotic index (nb of div/non dividing cells)</p></li>
+</ul>
+<div id="map-of-clonal-origin" class="section level3">
+<h3>Map of clonal origin</h3>
+<p>I have N timepoints: 1, 2, 3, …, N-1, N. I have the direct lineage between N-1 and N, N-2 and N-1, …, 1 and 2. I would like to have intermediate lineages, e.g. ultimately lineage between 1 and N.</p>
+<p>Let’s say each cell at timepoint 1 is the beginning of a “track”. For each cell, I’ll look in time an report each link I find: cell 12 –&gt; cell 189 (1–&gt;2), then cell 189 –&gt; cell 308 and cell 189 –&gt; cell 309 (2–&gt;3), then cell 309 –&gt; cell 401 and cell 309 –&gt; cell 402 and cell 308 –&gt; 456 (3–&gt;4), which gives:<br />
+Track 1<br />
+source 12 frameSource 1 target 189 frameTarget 2<br />
+source 189 target 308<br />
+source 189 target 309<br />
+– NB if “189” is not a unique ID, I need to make it unique adding the frame, for instance 2_189</p>
+<p>And spot dataframe is: ID_12 frame 1 ID_189 frame 2</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dirData2 &lt;-<span class="st"> </span><span class="kw">paste0</span>(dirData, <span class="st">&quot;/Louveaux_PhD/2013-02-12_LTi6B_dis_A&quot;</span>)
+
+lineages &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;/2013-02-12_LTi6B_dis_A_T0-T12h_lineage.csv&quot;</span>, 
+  <span class="st">&quot;/2013-02-12_LTi6B_dis_A_T12h-T24h_lineage.csv&quot;</span>,
+  <span class="st">&quot;/2013-02-12_LTi6B_dis_A_T24h-T36h_lineage.csv&quot;</span>,
+  <span class="st">&quot;/2013-02-12_LTi6B_dis_A_T36h-T48h_lineage.csv&quot;</span>)
+
+allLineages &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw">map</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(lineages), <span class="cf">function</span>(i){
+  lin_tmp &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">as.tibble</span>(<span class="kw">read.csv2</span>(<span class="kw">paste0</span>(dirData2, lineages[i]), <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">sep =</span> <span class="st">&quot;,&quot;</span>))
+  lin &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">bind_cols</span>(lin_tmp, 
+                          <span class="kw">data.frame</span>(<span class="dt">frameSource =</span> <span class="kw">rep</span>(<span class="kw">as.integer</span>(i), <span class="kw">nrow</span>(lin_tmp)),
+                                     <span class="dt">frameTarget =</span> <span class="kw">rep</span>(<span class="kw">as.integer</span>(i<span class="op">+</span><span class="dv">1</span>), <span class="kw">nrow</span>(lin_tmp)))) <span class="op">%&gt;%</span>
+<span class="st">    </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">ID_Source =</span> Parent.Label,
+                  <span class="dt">ID_Target =</span> Label) <span class="op">%&gt;%</span>
+<span class="st">    </span>dplyr<span class="op">::</span><span class="kw">select</span>(ID_Source, ID_Target)
+    <span class="kw">names</span>(lin) &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw">map2_chr</span>(<span class="kw">names</span>(lin), <span class="kw">c</span>(i, i<span class="op">+</span><span class="dv">1</span>), <span class="op">~</span><span class="st"> </span><span class="kw">paste0</span>(.x, .y))
+    lin
+}
+)
+
+
+tmp_store &lt;-<span class="st"> </span>allLineages[[<span class="dv">1</span>]]
+<span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span><span class="kw">length</span>(lineages)){
+  tmp_store &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">full_join</span>(tmp_store, allLineages[[j]], <span class="co"># full join or left join?</span>
+                 <span class="dt">by=</span><span class="kw">setNames</span>(<span class="kw">paste0</span>(<span class="st">&quot;ID_Source&quot;</span>, j), <span class="kw">paste0</span>(<span class="st">&quot;ID_Target&quot;</span>, j)))
+}
+
+
+<span class="kw">library</span>(plotly)
+dirData2 &lt;-<span class="st"> </span><span class="kw">paste0</span>(dirData, <span class="st">&quot;/Louveaux_PhD/2013-02-12_LTi6B_dis_A&quot;</span>)
+plyExample &lt;-<span class="st"> </span><span class="kw">paste0</span>(dirData2, <span class="st">&quot;/normalMesh/2013-02-12_LTi6B_dis_A_T48h_cells_minW1_normalMesh.ply&quot;</span>)
+meshExample &lt;-<span class="st"> </span>MorphoGraphX2R<span class="op">::</span><span class="kw">modified_read.ply</span>(<span class="dt">file =</span> plyExample)
+
+test &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(meshExample<span class="op">$</span>it_label, tmp_store, <span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;label&quot;</span> =<span class="st"> &quot;ID_Target5&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(., label, ID_Source1) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unique</span>(.)
+
+n.of.desc &lt;-<span class="st"> </span><span class="kw">table</span>(test<span class="op">$</span>ID_Source1) <span class="co">#nb of grandchildren/descendant for this particular cell</span>
+
+link &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw">map</span>( test<span class="op">$</span>ID_Source1, <span class="cf">function</span>(x){
+  <span class="cf">if</span> (<span class="kw">length</span>(<span class="kw">which</span>(<span class="kw">as.numeric</span>(<span class="kw">row.names</span>(n.of.desc)) <span class="op">==</span><span class="st"> </span>x)) <span class="op">==</span><span class="dv">0</span>){
+    <span class="ot">NA</span>
+  }<span class="cf">else</span>{
+    n.of.desc[<span class="kw">which</span>(<span class="kw">row.names</span>(n.of.desc) <span class="op">==</span><span class="st"> </span>x)]
+  }
+  })
+<span class="kw">unlist</span>(link)
+
+
+color &lt;-<span class="st"> </span><span class="ot">NULL</span>
+<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(meshExample<span class="op">$</span>allColors<span class="op">$</span>Col_label)){
+color[i] &lt;-<span class="st">  </span><span class="kw">setdiff</span>(<span class="kw">unique</span>(meshExample<span class="op">$</span>allColors<span class="op">$</span>Col_label[,i]), <span class="st">&quot;#000000&quot;</span>) <span class="co"># here I remove black vertices</span>
+} <span class="co"># to be more general, remove any color shared by two vertices</span>
+
+trace2 &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">type=</span><span class="st">&quot;mesh3d&quot;</span>,
+                <span class="dt">x =</span> meshExample<span class="op">$</span>vb[<span class="dv">1</span>,],
+                <span class="dt">y =</span> meshExample<span class="op">$</span>vb[<span class="dv">2</span>,],
+                <span class="dt">z =</span> meshExample<span class="op">$</span>vb[<span class="dv">3</span>,],
+                <span class="dt">i =</span> meshExample<span class="op">$</span>it[<span class="dv">1</span>,]<span class="op">-</span><span class="dv">1</span>, <span class="co"># NB indices start at 0</span>
+                <span class="dt">j =</span> meshExample<span class="op">$</span>it[<span class="dv">2</span>,]<span class="op">-</span><span class="dv">1</span>,
+                <span class="dt">k =</span> meshExample<span class="op">$</span>it[<span class="dv">3</span>,]<span class="op">-</span><span class="dv">1</span>,
+               <span class="dt">facecolor =</span> color
+)
+<span class="co">#facecolor: one color per triangle (e.g. length(facecolor) == length(i))</span>
+
+<span class="co"># data &lt;- list(trace2)</span>
+
+layout &lt;-<span class="st"> </span><span class="kw">list</span>(
+  <span class="dt">scene =</span> <span class="kw">list</span>(
+    <span class="dt">xaxis =</span> <span class="kw">list</span>(
+      <span class="dt">backgroundcolor =</span> <span class="st">&quot;rgb(230,230,230)&quot;</span>, 
+      <span class="dt">gridcolor =</span> <span class="st">&quot;rgb(255,255,255)&quot;</span>, 
+      <span class="dt">showbackground =</span> <span class="ot">TRUE</span>, 
+      <span class="dt">zerolinecolor =</span> <span class="st">&quot;rgb(255,255,255&quot;</span>
+    ), 
+    <span class="dt">yaxis =</span> <span class="kw">list</span>(
+      <span class="dt">backgroundcolor =</span> <span class="st">&quot;rgb(230,230,230)&quot;</span>, 
+      <span class="dt">gridcolor =</span> <span class="st">&quot;rgb(255,255,255)&quot;</span>, 
+      <span class="dt">showbackground =</span> <span class="ot">TRUE</span>, 
+      <span class="dt">zerolinecolor =</span> <span class="st">&quot;rgb(255,255,255&quot;</span>
+    ), 
+    <span class="dt">zaxis =</span> <span class="kw">list</span>(
+      <span class="dt">backgroundcolor =</span> <span class="st">&quot;rgb(230,230,230)&quot;</span>, 
+      <span class="dt">gridcolor =</span> <span class="st">&quot;rgb(255,255,255)&quot;</span>, 
+      <span class="dt">showbackground =</span> <span class="ot">TRUE</span>, 
+      <span class="dt">zerolinecolor =</span> <span class="st">&quot;rgb(255,255,255&quot;</span>
+    )
+  ), 
+  <span class="dt">title =</span> <span class="st">&quot;My mesh&quot;</span>, 
+  <span class="dt">xaxis =</span> <span class="kw">list</span>(<span class="dt">title =</span> <span class="st">&quot;m[, 1]&quot;</span>), 
+  <span class="dt">yaxis =</span> <span class="kw">list</span>(<span class="dt">title =</span> <span class="st">&quot;m[, 2]&quot;</span>)
+)
+
+p &lt;-<span class="st"> </span><span class="kw">plot_ly</span>()
+p &lt;-<span class="st"> </span><span class="kw">add_trace</span>(p, <span class="dt">x=</span>trace2<span class="op">$</span>x, <span class="dt">y=</span>trace2<span class="op">$</span>y, <span class="dt">z=</span>trace2<span class="op">$</span>z,
+                  <span class="dt">facecolor=</span>trace2<span class="op">$</span>facecolor,
+               <span class="dt">i=</span>trace2<span class="op">$</span>i, <span class="dt">j=</span>trace2<span class="op">$</span>j, <span class="dt">k=</span>trace2<span class="op">$</span>k, <span class="dt">type=</span>trace2<span class="op">$</span>type)
+p &lt;-<span class="st"> </span><span class="kw">layout</span>(p, <span class="dt">scene=</span>layout<span class="op">$</span>scene, <span class="dt">title=</span>layout<span class="op">$</span>title, <span class="dt">xaxis=</span>layout<span class="op">$</span>xaxis, <span class="dt">yaxis=</span>layout<span class="op">$</span>yaxis)
+
+p</code></pre></div>
+</div>
 </div>
 
 

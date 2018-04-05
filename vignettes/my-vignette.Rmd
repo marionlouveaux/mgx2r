@@ -11,21 +11,24 @@ editor_options:
   chunk_output_type: console
 ---
 
-## Vignette Info
+## Extra librairies
 
 ```{r lib}
 library(magrittr)
+library(dplyr)
+library(plotly)
 ```
 
+## Loading data
 
 All .ply demonstration data are stored in /inst/extdata.
 ```{r allData}
-dirData <- "/Users/mlouveaux/Documents/Postdoc/Projects/MGX-R bridge/MorphoGraphX2R/inst/extdata/"
+dirData <- "/Users/mlouveaux/Documents/Postdoc/Projects/MGX-R bridge/MorphoGraphX2R/inst/extdata"
 ```
 
 We select one .ply as example.
 ```{r myData}
-dirPly <- "2017-02-15_ply_files"
+dirPly <- "/2017-02-15_ply_files"
 
 filePly <- paste0(dirData, dirPly, "/test4.ply")
 fileCellGraph <- paste0(dirData, dirPly, "/test4_cellGraph.ply")
@@ -34,11 +37,12 @@ fileCellGraph <- paste0(dirData, dirPly, "/test4_cellGraph.ply")
 
 
 Note from 2017-12-26: read_ply_function is clean. I need now to test it on numerous meshes to make it as general as possible.
-2017-12-28: read_cellGraph looks clean as well. I need to extract the dataframes from edges and vertices properties.
 
 
+## Mesh
 
 ```{r readPly}
+# N.B. to check mesh: put rgl viz out of modified_read.ply
 myMesh <- MorphoGraphX2R::modified_read.ply(file = filePly, ShowSpecimen = TRUE, addNormals = TRUE,
                                MatCol= 1, header_max = 30,
                                my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
@@ -57,11 +61,91 @@ Information relative to cells and cell walls (resp. vertices and edges of the ce
 myCellGraph <- MorphoGraphX2R::modified_read.cellGraph(fileCellGraph = fileCellGraph, header_max = 30)
 ```
 
-How to display info on a 3D rgl graph:
 
-```{r map, eval=FALSE}
 
+## Displaying the mesh with plotly
+```{r}
+plotlyMesh <- function(meshExample,
+                       meshColors = meshExample$allColors$Col_label,
+                       meshCellcenter = NULL){
+  if (is.null(nrow(meshColors))>1){
+color <- NULL
+for (i in 1:ncol(meshColors)){
+color[i] <-  setdiff(unique(meshColors[,i]), "#000000") # here I remove black vertices
+} # to be more general, remove any color shared by two vertices
+  }else{
+  color <- meshColors
+}
+
+trace2 <- list(type="mesh3d",
+                x = meshExample$vb[1,],
+                y = meshExample$vb[2,],
+                z = meshExample$vb[3,],
+                i = meshExample$it[1,]-1, # NB indices start at 0
+                j = meshExample$it[2,]-1,
+                k = meshExample$it[3,]-1,
+               facecolor = color #one color per triangle (not per biological cell)
+)
+#facecolor: one color per triangle (e.g. length(facecolor) == length(i))
+
+# data <- list(trace2)
+
+layout <- list(
+  scene = list(
+    xaxis = list(
+      backgroundcolor = "rgb(230,230,230)", 
+      gridcolor = "rgb(255,255,255)", 
+      showbackground = TRUE, 
+      zerolinecolor = "rgb(255,255,255)"
+    ), 
+    yaxis = list(
+      backgroundcolor = "rgb(230,230,230)", 
+      gridcolor = "rgb(255,255,255)", 
+      showbackground = TRUE, 
+      zerolinecolor = "rgb(255,255,255)"
+    ), 
+    zaxis = list(
+      backgroundcolor = "rgb(230,230,230)", 
+      gridcolor = "rgb(255,255,255)", 
+      showbackground = TRUE, 
+      zerolinecolor = "rgb(255,255,255)"
+    )
+  ), 
+  title = "My mesh", 
+  xaxis = list(title = "m[, 1]"), 
+  yaxis = list(title = "m[, 2]")
+)
+
+p <- plot_ly()
+p <- add_trace(p, x=trace2$x, y=trace2$y, z=trace2$z,
+                  facecolor=trace2$facecolor,
+               i=trace2$i, j=trace2$j, k=trace2$k, type=trace2$type)
+if (!is.null(meshCellcenter)){
+p <- add_markers(p, x = meshCellcenter$x,
+                y = meshCellcenter$y,
+                z = meshCellcenter$z,
+                marker=list(symbol = 'circle', sizemode="diameter", sizeref = 0.01),
+                sizes = c(0.0005, 0.0005)) ## PB with size!!!
+  }
+p <- layout(p, scene=layout$scene, title=layout$title, xaxis=layout$xaxis, yaxis=layout$yaxis)
+
+p
+}
 ```
+
+
+
+## Displaying specific info from cellGraph on the mesh
+
+### Scalar info (area, growth rate...)
+```{r map3D, eval=FALSE}
+plotlyMesh(meshExample = myMesh, 
+           meshColors = left_join(myMesh$it_label, myCellGraph$vertices)$GeometryArea,
+           meshCellcenter = myCellGraph$vertices[,c("x", "y", "z")])
+```
+
+
+### Vector/tensor info (principal dir of curv...)
 
 - list of attributes needed: 
     *area--
@@ -114,25 +198,26 @@ ID_189 frame 2
 
 
 ```{r map, eval=FALSE}
-dirData2 <- paste0(dirData, "Louveaux_PhD/2013-02-12_LTi6B_dis_A/")
+dirData2 <- paste0(dirData, "/Louveaux_PhD/2013-02-12_LTi6B_dis_A")
 
-lineages <- c("2013-02-12_LTi6B_dis_A_T0-T12h_lineage.csv", 
-  "2013-02-12_LTi6B_dis_A_T12h-T24h_lineage.csv",
-  "2013-02-12_LTi6B_dis_A_T24h-T36h_lineage.csv",
-  "2013-02-12_LTi6B_dis_A_T36h-T48h_lineage.csv")
+lineages <- c("/2013-02-12_LTi6B_dis_A_T0-T12h_lineage.csv", 
+  "/2013-02-12_LTi6B_dis_A_T12h-T24h_lineage.csv",
+  "/2013-02-12_LTi6B_dis_A_T24h-T36h_lineage.csv",
+  "/2013-02-12_LTi6B_dis_A_T36h-T48h_lineage.csv")
 
 allLineages <- purrr::map(1:length(lineages), function(i){
   lin_tmp <- tibble::as.tibble(read.csv2(paste0(dirData2, lineages[i]), header = TRUE, sep = ","))
   lin <- dplyr::bind_cols(lin_tmp, 
                           data.frame(frameSource = rep(as.integer(i), nrow(lin_tmp)),
                                      frameTarget = rep(as.integer(i+1), nrow(lin_tmp)))) %>%
-    dplyr::mutate(ID_Source = paste0(Parent.Label, "_", frameSource),
-                  ID_Target = paste0(Label, "_", frameTarget)) %>%
+    dplyr::mutate(ID_Source = Parent.Label,
+                  ID_Target = Label) %>%
     dplyr::select(ID_Source, ID_Target)
     names(lin) <- purrr::map2_chr(names(lin), c(i, i+1), ~ paste0(.x, .y))
     lin
 }
 )
+
 
 tmp_store <- allLineages[[1]]
 for (j in 2:length(lineages)){
@@ -140,10 +225,26 @@ for (j in 2:length(lineages)){
                  by=setNames(paste0("ID_Source", j), paste0("ID_Target", j)))
 }
 
+
+
+dirData2 <- paste0(dirData, "/Louveaux_PhD/2013-02-12_LTi6B_dis_A")
+plyExample <- paste0(dirData2, "/normalMesh/2013-02-12_LTi6B_dis_A_T48h_cells_minW1_normalMesh.ply")
+meshExample <- MorphoGraphX2R::modified_read.ply(file = plyExample)
+
+test <- dplyr::left_join(meshExample$it_label, tmp_store, by=c("label" = "ID_Target5")) %>%
+  dplyr::select(., label, ID_Source1) %>%
+  unique(.)
+
+n.of.desc <- table(test$ID_Source1) #nb of grandchildren/descendant for this particular cell
+
+link <- purrr::map( test$ID_Source1, function(x){
+  if (length(which(as.numeric(row.names(n.of.desc)) == x)) ==0){
+    NA
+  }else{
+    n.of.desc[which(row.names(n.of.desc) == x)]
+  }
+  })
+unlist(link)
 ```
-
-
-
-
 
 
