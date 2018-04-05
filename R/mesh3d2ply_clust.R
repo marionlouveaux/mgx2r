@@ -48,7 +48,7 @@ mesh3D2ply_clust <- function(mesh = mesh,
   res <- snow::parApply(cl, triangles_label, 1, function(i){ paste(i[1], i[2], sep = "_") })
   snow::stopCluster(cl)
 
-  # vertices with associated label
+  # vertices with associated label (label is expected to be a numeric)
   res2 <- matrix(as.numeric(unlist(strsplit( unique(res), split = "_"))), byrow = TRUE, ncol = 2)
 
   # Repeted vertices will receive label -1
@@ -101,9 +101,9 @@ mesh3D2ply_clust <- function(mesh = mesh,
   cat("property int label\n")
   cat("end_header\n")
   sink()
-
+  options(scipen=10)
   write.table(x = vertex_coord, file = filename, append = TRUE, sep = " ", row.names = FALSE, col.names = FALSE, quote = FALSE) #quote = FALSE is very important since we force the format to character to avoid the scientific notation
   write.table(x = triangles_IDs, file = filename, append = TRUE, sep = " ", row.names = FALSE, col.names = FALSE, quote = FALSE)
-
+  options(scipen=0)
 }
 
