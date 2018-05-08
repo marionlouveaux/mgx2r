@@ -1,9 +1,9 @@
 #' Identify and sort uchar in the properties of vertices and faces
 #'
-#' @param ppty
-#' @param file
+#' @param ppty lines containing the properties info in the header of the .ply
+#' @param file ply file
 #' @param toSkip to skip when reading the file (either headerend or headerend+nvertices if reading the face ppty)
-#' @param Nlines
+#' @param Nlines number of face or vertices
 #' @keywords
 #' @export
 #' @examples
