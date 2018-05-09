@@ -4,6 +4,7 @@
 #' @param meshExample mesh loaded with the modified_read.ply function
 #' @param meshColors to display colored on the mesh
 #' @param meshCellcenter to display the center of (biological) cells on the mesh
+#' @param defaultColor hex code of color to give by default to the mesh as well as percentage of opacity
 #' @importFrom magrittr %>%
 #' @keywords plotly
 #' @export
@@ -14,7 +15,8 @@
 
 plotlyMesh <- function(meshExample,
                        meshColors = NULL,
-                       meshCellcenter = NULL){
+                       meshCellcenter = NULL,
+                       defaultColor = list("#CCCCFF", 0.2)){
   makeColorScale <- FALSE
   if (!is.null(nrow(meshColors)) && ncol(meshColors)>1){
     color <- NULL
@@ -24,8 +26,8 @@ plotlyMesh <- function(meshExample,
     opacity <- 1
   }else{
     if (is.null(meshColors)){
-      color <- rep("#CCCCFF", ncol(myMesh$it)) # "#00FFFF"
-      opacity <- 0.2
+      color <- rep(defaultColor[[1]], ncol(myMesh$it)) # "#00FFFF"
+      opacity <- defaultColor[[2]]
     }else{
       makeColorScale <- TRUE
       colorCut <- cut(pull(meshColors), 15,
@@ -49,34 +51,53 @@ plotlyMesh <- function(meshExample,
   #facecolor: one color per triangle (e.g. length(facecolor) == length(i))
 
   if (makeColorScale){
-    trace4 <- list(
-      x = c(100,1,200),
-      y = c(200,1,1),
-      z = c(1,500,3),
-      marker = list(
-        autocolorscale = FALSE,
-        cmax = max(meshColors),#2.5,
-        cmin = min(meshColors),#0,
-        colorbar = list(
-          x = 1.2,
-          y = 0.5,
-          len = 0.3,
-          thickness = 15,
-          tickfont = list(size = 12),
-          titlefont = list(size = 20)
-        ),
-        colorscale = matlab.like(15), # from colorRamps
-        # reversescale = TRUE,
-        line = list(width = 0),
-        opacity = 0.9,
-        showscale = TRUE,
-        size = 20,
-        symbol = "circle"
-      ),
-      mode = "markers",
-      opacity = 0,
-      type = "scatter3d"
-    )
+
+
+    trace4 <- list(x = c(100,1,200),
+                   y = c(200,1,1),
+                   z = c(1,500,3),
+                   marker = list(
+                     autocolorscale = FALSE,
+                     cmax = round(max(meshColors)),#2.5,
+                     cmin = round(min(meshColors)),#0,
+                     color = c("#0000aa", "#99ff99", "#aa0000"),
+                     colorbar = list(
+                                 x = 1.2,
+                                 y = 0.5,
+                                 len = 1,
+                                 thickness = 15,
+                                 tickfont = list(size = 12),
+                                 titlefont = list(size = 20)
+                               ),
+                                colorscale = purrr::map2(.x = seq(0,1, len=15),
+                                                         .y = matlab.like(15),
+                                                         ~ list(.x, .y)),
+                               # colorscale = list(c(0, "#0000aa"), # list needs to be between 0 and 1, check why interval is not cut with evenly spaced breaks
+                               #                   list(0.2, "#0033d4"),
+                               #                   list(0.24, "#0066ff"),
+                               #                   list(0.28, "#0099ff"),
+                               #                   list(0.32, "#00ccff"),
+                               #                   list(0.36, "#33ffff"),
+                               #                   list(0.4, "#66ffcc"),
+                               #                   list(0.44, "#99ff99"),
+                               #                   list(0.48, "#ccff66"),
+                               #                   list(0.52, "#ffff33"),
+                               #                   list(0.56, "#ffcc00"),
+                               #                   list(0.6, "#ff9900"),
+                               #                   list(0.64, "#ff6600"),
+                               #                   list(0.8, "#d53300"),
+                               #                   list(1, "#aa0000")),
+                               line = list(width = 0),
+                               opacity = 0.1,
+                               showscale = TRUE,
+                               size = 20,
+                               symbol = "circle"
+                     ),
+                     mode = "markers",
+                     opacity = 0,
+                     type = "scatter3d"
+                   )
+
   }
 
   layout <- list(

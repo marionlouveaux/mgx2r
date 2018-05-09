@@ -4,7 +4,8 @@
 \alias{plotlyMesh}
 \title{A layout for plotly graphs}
 \usage{
-plotlyMesh(meshExample, meshColors = NULL, meshCellcenter = NULL)
+plotlyMesh(meshExample, meshColors = NULL, meshCellcenter = NULL,
+  defaultColor = list("#CCCCFF", 0.2))
 }
 \arguments{
 \item{meshExample}{mesh loaded with the modified_read.ply function}
@@ -12,6 +13,8 @@ plotlyMesh(meshExample, meshColors = NULL, meshCellcenter = NULL)
 \item{meshColors}{to display colored on the mesh}
 
 \item{meshCellcenter}{to display the center of (biological) cells on the mesh}
+
+\item{defaultColor}{hex code of color to give by default to the mesh as well as percentage of opacity}
 }
 \value{
 plotly graph
