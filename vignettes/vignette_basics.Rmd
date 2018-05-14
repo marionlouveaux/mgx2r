@@ -4,14 +4,22 @@ author: "Marion Louveaux"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Vignette MorphoGraphX2R}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
   chunk_output_type: console
 ---
 
-## Extra librairies
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+## Librairies needed
 
 ```{r lib}
 library(colorRamps)
@@ -32,15 +40,8 @@ dirData <- "/Users/mlouveaux/Documents/Postdoc/Projects/MGX-R bridge/MorphoGraph
 
 We select one .ply as example.
 ```{r myData}
-# dirPly <- "/2017-02-15_ply_files"
-# 
-# filePly <- paste0(dirData, dirPly, "/test4.ply")
-# fileCellGraph <- paste0(dirData, dirPly, "/test4_cellGraph.ply")
-
-dirPly <- "/Louveaux_PhD/2013-02-12_LTi6B_dis_A"
-
-filePly <- paste0(dirData, dirPly, "/normalMesh/2013-02-12_LTi6B_dis_A_T0_cells_minW1_normalMesh.ply")
-fileCellGraph <- paste0(dirData, dirPly, "/cellGraph_and_normalMeshV2/2013-02-12_LTi6B_dis_A_T0_cells_minW1_cellGraph.ply")
+filePly <- paste0(dirData, "/normalMesh/2013-02-12_LTi6B_dis_A_T0_cells_minW1_normalMesh.ply")
+fileCellGraph <- paste0(dirData, "/cellGraph/2013-02-12_LTi6B_dis_A_T0_cells_minW1_cellGraph.ply")
 
 ```
 
@@ -72,18 +73,24 @@ myMesh$material$color <- myMesh$allColors$Col_signal
 
 Information relative to cells and cell walls (resp. vertices and edges of the cell graph) are stored into two dataframes and combined into a list:
 ```{r readCellGraph, eval=FALSE}
-myCellGraph <- modified_read.cellGraph(fileCellGraph = fileCellGraph, header_max = 30)
+myCellGraph <- MorphoGraphX2R::modified_read.cellGraph(fileCellGraph = fileCellGraph, header_max = 30)
 ```
 
 
 
 ## Displaying the mesh with plotly
 
+```{r}
+# meshCellcenter <- myCellGraph$vertices[,c("label","x", "y", "z")]
+meshCellcenter <- NULL
+```
+
 To display the mesh with cell labels:
 ```{r map3D, eval=FALSE}
 # add control on the title of the plot
 p1 <- plotlyMesh(meshExample = myMesh,
-           meshColors = myMesh$allColors$Col_label)
+           meshColors = myMesh$allColors$Col_label,
+           meshCellcenter = meshCellcenter)
 p1
 ```
 
@@ -91,7 +98,8 @@ Without the cell labels:
 ```{r map3D2, eval=FALSE}
 # add control on the level of opacity
 plotlyMesh(meshExample = myMesh,
-           meshColors = NULL)
+           meshColors = NULL,
+           meshCellcenter = meshCellcenter)
 ```
 
 
@@ -103,7 +111,7 @@ plotlyMesh(meshExample = myMesh,
 p2 <- plotlyMesh(meshExample = myMesh, 
            meshColors = left_join(myMesh$it_label, myCellGraph$vertices) %>%
              select(., GeometryArea),
-           meshCellcenter = NULL
+           meshCellcenter =  meshCellcenter
 )
 p2
 ```
@@ -112,7 +120,7 @@ p2
 ### Vector/tensor info (principal dir of curv...)
 
 ```{r heatmap3D2, eval=FALSE}
-meshCellcenter <- myCellGraph$vertices[,c("x", "y", "z")]
+
 p3 <- plotlyMesh(meshExample = myMesh, 
                 meshColors = NULL,
                 meshCellcenter = meshCellcenter)
@@ -167,7 +175,7 @@ for (i in 1:nrow(tmp)){
   zcoord <- as.vector(t(select(tmp, z, grand.z1, grand.z2)[i,]))
   p3 <- add_trace(p3, x = xcoord, y = ycoord, z = zcoord,
                  line = list(color = 'rgb(0, 0, 0)', width = 6), mode = "lines",
-                 type = "scatter3d") %>%
+                 type = "scatter3d", hoverinfo = 'none') %>%
     layout(showlegend = FALSE)
   
   xcoord <- as.vector(t(select(tmp, x, petit.x1, petit.x2)[i,]))
@@ -175,7 +183,7 @@ for (i in 1:nrow(tmp)){
   zcoord <- as.vector(t(select(tmp, z, petit.z1, petit.z2)[i,]))
   p3 <- add_trace(p3, x = xcoord, y = ycoord, z = zcoord,
                  line = list(color = 'rgb(0, 0, 0)', width = 6), mode = "lines",
-                 type = "scatter3d") %>%
+                 type = "scatter3d", hoverinfo = 'none') %>%
     layout(showlegend = FALSE)
 
 }
@@ -203,119 +211,13 @@ for (i in 1:length(unique(edgesCoords))){
   ycoord <- edge_tmp[2,]
   zcoord <- edge_tmp[3,]
   p <- add_trace(p, x = xcoord, y = ycoord, z = zcoord,
-                 line = list(color = 'rgb(0, 0, 0)', width = 6), mode = "lines",
-                 type = "scatter3d") %>%
+                 line = list(color = 'rgb(255, 255, 255)', width = 6), mode = "lines",
+                 type = "scatter3d", hoverinfo = 'none') %>%
     layout(showlegend = FALSE)
 }
 p
 
 ```
 
-
-## Adding time information
-
-```{r}
-```
-
-
-- list of attributes needed: 
-    *area--
-    *Gaussian curvature, ---
-    *principal dir of curv---
-    *cell aspect ratio--
-    *number of neighbours--
-
-    *growth rate
-    *growth direction
-    *growth anisotropy
-    
-    *region
-    *lineage
-    *timepoint
-- Export cellGraphs for each timepoint with all needed attributes
-- Maps to do:
-  - regions (custom label)
-  - area
-  - gaussian curvature
-  - principal directions of curvature
-  - growth rates
-  - growth directions
-  - cell aspect ratio
-  - clonal origin (integration of all lineage maps from previous timepoints)
-- Histogram of number of neighbours
-- Boxplots
-  - area
-  - growth rate
-  - growth anisotropy 
-- PCA (area, growth rate, cell aspect ratio, growth anisotropy, sign of Gauss curv, curv anisotropy, abs value of Gauss curv, nb of neigh, localisation of cells = region)
-- Barplot of the mitotic index (nb of div/non dividing cells)
-
-
-
-### Map of clonal origin
-
-I have N timepoints: 1, 2, 3, ..., N-1, N. I have the direct lineage between N-1 and N, N-2 and N-1, ..., 1 and 2. I would like to have intermediate lineages, e.g. ultimately lineage between 1 and N.
-
-Let's say each cell at timepoint 1 is the beginning of a "track". For each cell, I'll look in time an report each link I find: cell 12 --> cell 189 (1-->2), then cell 189 --> cell 308 and cell 189 --> cell 309 (2-->3), then cell 309 --> cell 401 and cell 309 --> cell 402  and cell 308 --> 456 (3-->4), which gives:      
-Track 1      
-source 12 frameSource 1 target 189 frameTarget 2       
-source 189 target 308       
-source 189 target 309       
--- NB if "189" is not a unique ID, I need to make it unique adding the frame, for instance 2_189
-
-And spot dataframe is:
-ID_12 frame 1
-ID_189 frame 2
-
-
-```{r map, eval=FALSE}
-dirData2 <- paste0(dirData, "/Louveaux_PhD/2013-02-12_LTi6B_dis_A")
-
-lineages <- c("/2013-02-12_LTi6B_dis_A_T0-T12h_lineage.csv", 
-  "/2013-02-12_LTi6B_dis_A_T12h-T24h_lineage.csv",
-  "/2013-02-12_LTi6B_dis_A_T24h-T36h_lineage.csv",
-  "/2013-02-12_LTi6B_dis_A_T36h-T48h_lineage.csv")
-
-allLineages <- purrr::map(1:length(lineages), function(i){
-  lin_tmp <- tibble::as.tibble(read.csv2(paste0(dirData2, lineages[i]), header = TRUE, sep = ","))
-  lin <- dplyr::bind_cols(lin_tmp, 
-                          data.frame(frameSource = rep(as.integer(i), nrow(lin_tmp)),
-                                     frameTarget = rep(as.integer(i+1), nrow(lin_tmp)))) %>%
-    dplyr::mutate(ID_Source = Parent.Label,
-                  ID_Target = Label) %>%
-    dplyr::select(ID_Source, ID_Target)
-    names(lin) <- purrr::map2_chr(names(lin), c(i, i+1), ~ paste0(.x, .y))
-    lin
-}
-)
-
-
-tmp_store <- allLineages[[1]]
-for (j in 2:length(lineages)){
-  tmp_store <- dplyr::full_join(tmp_store, allLineages[[j]], # full join or left join?
-                 by=setNames(paste0("ID_Source", j), paste0("ID_Target", j)))
-}
-
-
-
-dirData2 <- paste0(dirData, "/Louveaux_PhD/2013-02-12_LTi6B_dis_A")
-plyExample <- paste0(dirData2, "/normalMesh/2013-02-12_LTi6B_dis_A_T48h_cells_minW1_normalMesh.ply")
-meshExample <- MorphoGraphX2R::modified_read.ply(file = plyExample)
-
-test <- dplyr::left_join(meshExample$it_label, tmp_store, by=c("label" = "ID_Target5")) %>%
-  dplyr::select(., label, ID_Source1) %>%
-  unique(.)
-
-n.of.desc <- table(test$ID_Source1) #nb of grandchildren/descendant for this particular cell
-
-link <- purrr::map( test$ID_Source1, function(x){
-  if (length(which(as.numeric(row.names(n.of.desc)) == x)) ==0){
-    NA
-  }else{
-    n.of.desc[which(row.names(n.of.desc) == x)]
-  }
-  })
-unlist(link)
-```
 
 
