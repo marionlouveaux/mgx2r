@@ -52,7 +52,6 @@ plotlyMesh <- function(meshExample,
 
   if (makeColorScale){
 
-
     trace4 <- list(x = c(100,1,200),
                    y = c(200,1,1),
                    z = c(1,500,3),
@@ -97,7 +96,6 @@ plotlyMesh <- function(meshExample,
                      opacity = 0,
                      type = "scatter3d"
                    )
-
   }
 
   layout <- list(
@@ -127,25 +125,40 @@ plotlyMesh <- function(meshExample,
   )
 
   p <- plot_ly()
+
   p <- add_trace(p, x = trace2$x, y=trace2$y, z=trace2$z,
                  facecolor=trace2$facecolor,
                  i=trace2$i, j=trace2$j, k=trace2$k, type=trace2$type,
-                 opacity=trace2$opacity)
+                 opacity=trace2$opacity,
+                 hoverinfo = 'none',
+                 showlegend = FALSE)
+
   if (makeColorScale){
-    p <- add_trace(p, x=trace2$x, y=trace2$y, z=trace2$z,
+    p <- add_trace(p,
+                   x = meshCellcenter$x,
+                   y = meshCellcenter$y,
+                   z = meshCellcenter$z,
+                   text = as.character(meshCellcenter$label),
+                   hoverinfo = 'text',
                    marker = trace4$marker,
                    mode = trace4$mode,
                    opacity = trace4$opacity,
-                   type = trace4$type)
+                   type = trace4$type,
+                   showlegend = FALSE
+                   )
   }
   if (!is.null(meshCellcenter)){ # show cell center
     p <- add_trace(p, x = meshCellcenter$x,
                    y = meshCellcenter$y,
                    z = meshCellcenter$z,
+                   text = as.character(meshCellcenter$label),
+                   hoverinfo = 'text',
                    type = "scatter3d",
                    mode = "markers",
                    marker=list(color = 'rgb(255, 255, 255)',
-                               size = 1.5)
+                               size = 10),
+                   opacity = 0,
+                   showlegend = FALSE
     )
   }
   p <- layout(p, scene=layout$scene, title=layout$title, xaxis=layout$xaxis, yaxis=layout$yaxis)
