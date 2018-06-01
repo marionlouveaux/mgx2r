@@ -19,10 +19,11 @@ knitr::opts_chunk$set(
 ```
 
 
+The goal of this vignette is to highlight the power of R and Plotly regarding the visualisation of time series.
 
 ## Librairies
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 library(colorRamps)
 library(dplyr)
 library(plotly)
@@ -32,13 +33,17 @@ library(MorphoGraphX2R)
 
 
 ## Data (all meshes from one individual)
-```{r}
-ply.dir <- "/Users/mlouveaux/Documents/Postdoc/Projects/MGX-R bridge/MorphoGraphX2R/inst/extdata/normalMesh"
+
+Some .ply demonstration data coming from my PhD thesis are attached to this package and used here in the vignette. This dataset is a timelapse recording of the development of a WT shoot apical meristem expressing a membrane marker. I took one 3D stack every 12h and have 5 timepoints in total. Here I load the .ply and cell graph .ply for all the timepoints of this timelapse recording.
+
+```{r, warning = FALSE, message = FALSE}
+ply.dir <- system.file("extdata", "normalMesh/", package = "MorphoGraphX2R")
+
 mesh.all <- map(list.files(ply.dir, recursive = TRUE, full.names = TRUE),
                 ~ modified_read.ply(file = .x, ShowSpecimen = FALSE))
 
 
-graph.dir <- "/Users/mlouveaux/Documents/Postdoc/Projects/MGX-R bridge/MorphoGraphX2R/inst/extdata/cellGraph"
+graph.dir <- system.file("extdata", "cellGraph/", package = "MorphoGraphX2R")
 
 cellGraph.all <- map(list.files(graph.dir, recursive = TRUE, full.names = TRUE), ~modified_read.cellGraph(fileCellGraph = .x, header_max = 30))
 ```
@@ -46,12 +51,10 @@ cellGraph.all <- map(list.files(graph.dir, recursive = TRUE, full.names = TRUE),
 
 ## Plotly with slider
 
-```{r}
-meshColors.all <- list(NULL, NULL, NULL, NULL, NULL)
-# display.all <- list('heatmap', 'heatmap', 'heatmap', 'heatmap', 'heatmap') #check why with 'none' on the two firsts and 'labels' on the others, I display 'none' for n°1 and 3
-# defaultColor = list("#CCCCFF", 0.2)
-#display = 'none', 'heatmap', 'label' or 'cellaxis'
+In plotly, the slider option allows to visualise several graphs linked by a time variable.
 
+```{r, warning = FALSE, message = FALSE}
+meshColors.all <- list(NULL, NULL, NULL, NULL, NULL)
 
 plotlySlider <- function(meshExample,
                      graphExample,
