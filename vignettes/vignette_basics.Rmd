@@ -80,6 +80,11 @@ N.B.: to see the content of one of these function, just type its name without th
 Last but not least, I am retrieving the location of the cell centers to display the cell ID at their location.
 ```{r}
 meshCellcenter <- myCellGraph$vertices[,c("label","x", "y", "z")]
+
+#other way to define cell centers, without the cell graph
+vertexCellcenter <- purrr::map(1:ncol(myMesh$allColors$Col_label), ~ 
+  myMesh$it[ which(myMesh$allColors$Col_label[,.x] == names(which(table(myMesh$allColors$Col_label[,.x]) == 1))), .x ]
+)
 ```
 
 
@@ -210,28 +215,30 @@ show_tensors(p = meshPlotly,
 As some may be also interested by drawing the cell contours, I have added an example here. This kind of graph is quite ressource consuming, as it is drawing each edge one by one, as a segment. Here in this example, there is 5151 edges. This could be useful if you are looking at the accumulation of a given protein (for instance PIN1) at the membrane. The information would be stored in the edges dataframe of the cell graph and I could use it to make a heatmap on the cell contours.
 
 ```{r cellContours}
-vertexCellcenter <- purrr::map(1:ncol(myMesh$allColors$Col_label), ~ 
-  myMesh$it[ which(myMesh$allColors$Col_label[,.x] == names(which(table(myMesh$allColors$Col_label[,.x]) == 1))), .x ]
-)
+meshPlotly <- plotlyMesh(meshExample = myMesh,
+           meshColors = NULL)
 
+show_cellcontour <- function(p, mesh) {
+  
 edgesCoords <- purrr::map(1:ncol(myMesh$allColors$Col_label), ~ 
   myMesh$vb[,myMesh$it[ which(myMesh$allColors$Col_label[,.x] != names(which(table(myMesh$allColors$Col_label[,.x])==1))), .x]]
 )
-
-p4 <- plotlyMesh(meshExample = myMesh,
-           meshColors = NULL)
 
 for (i in 1:length(unique(edgesCoords))){
   edge_tmp <- unique(edgesCoords)[[i]]
   xcoord <- edge_tmp[1,]
   ycoord <- edge_tmp[2,]
   zcoord <- edge_tmp[3,]
-  p4 <- add_trace(p4, x = xcoord, y = ycoord, z = zcoord,
+  p <- add_trace(p, x = xcoord, y = ycoord, z = zcoord,
                  line = list(color = 'rgb(255, 255, 255)', width = 6), mode = "lines",
                  type = "scatter3d", hoverinfo = 'none') %>%
     layout(showlegend = FALSE)
 }
-p4
+p
+}
+
+show_cellcontour(p = meshPlotly, mesh = myMesh)
+
 ```
 
 
