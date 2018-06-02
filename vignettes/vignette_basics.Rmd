@@ -123,7 +123,7 @@ p2
 
 ### Vector/tensor info (principal dir of curvature...)
 
-This part of the code is quite fresh. It seems to work, but I haven't tested it extensively yet.
+This part of the code is quite new and provide tools to visualise tensors, such as growth direction or curvature direction on any kind of mesh (without label, with cell label, with heatmap colors...), as long as it is already converted to a plot with plotlyMesh. The code below has not been tested extensively yet.
 
 ```{r heatmap3D2, warning = FALSE, message = FALSE}
 meshPlotly <- plotlyMesh(meshExample = myMesh, 
