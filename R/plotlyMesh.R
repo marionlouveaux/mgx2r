@@ -5,7 +5,6 @@
 #' @param meshColors to display colored on the mesh
 #' @param meshCellcenter to display the center of (biological) cells on the mesh
 #' @param defaultColor hex code of color to give by default to the mesh as well as percentage of opacity
-#' @importFrom magrittr %>%
 #' @keywords plotly
 #' @export
 #' @examples

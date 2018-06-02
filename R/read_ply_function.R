@@ -7,7 +7,6 @@
 #' @param MatCol Integer. Default to 1, e.g. first element the header which is not x, y or z. To fill Material$color of mesh 3D.
 #' @param header_max Number of lines expected in header. Must be equal or greater to the actual number of lines in the header. Default to 30.
 #' @param my_colors Colors for displaying the mesh in an hexadecimal format.
-#' @importFrom magrittr %>%
 #' @importFrom grDevices rgb
 #' @keywords .ply, read
 #' @export
