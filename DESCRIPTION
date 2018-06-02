@@ -1,8 +1,9 @@
-Package: MorphoGraphX2R
-Title: What the Package Does (one line, title case)
+Package: mgx2r
+Title: Import mesh and cell graph files from MorphoGraphX software
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: person("Marion", "Louveaux", email = "marion.louveaux@gmail.com", role = c("aut", "cre"))
+Description: Import mesh and cell graph files from MorphoGraphX software as tidy dataframes.
+  Propose visualization solutions for mesh and cell graph files from MorphoGraphX with Plotly and Shiny.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -18,8 +19,10 @@ Imports:
     tibble,
     tidyr,
     snow
-Suggests: knitr,
+Suggests: 
+    knitr,
     plotly,
     rmarkdown,
-    RColorBrewer
+    RColorBrewer,
+    testthat
 VignetteBuilder: knitr
