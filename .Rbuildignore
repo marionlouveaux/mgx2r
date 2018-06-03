@@ -1,5 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^devtools_history\.R$
+^devstuff_history\.R$
 ^LICENSE\.md$
 ^README\.Rmd$
