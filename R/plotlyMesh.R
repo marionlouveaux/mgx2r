@@ -14,8 +14,6 @@
 #' @export
 #' @examples
 #' @return plotly graph
-#' plotlyMesh()
-
 
 plotlyMesh <- function(meshExample,
                        meshColors = NULL,

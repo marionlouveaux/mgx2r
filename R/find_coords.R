@@ -10,7 +10,6 @@
 #' @export
 #'
 #' @examples
-#' find_coords()
 
 find_coords <- function(cellcenter, tipUnit, d, scale = 1) {
   d <- d*scale

@@ -9,7 +9,6 @@
 #' @export
 #'
 #' @examples
-#' show_cellcontour
 
 show_cellcontour <- function(p, mesh) {
 

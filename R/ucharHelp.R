@@ -13,8 +13,6 @@
 #' @export
 #' @examples
 #' @return
-#' ucharHelp()
-
 
 # in read_cellGraph function:
 # ppty = ppty_vertices

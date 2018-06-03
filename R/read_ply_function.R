@@ -19,8 +19,6 @@
 #' @export
 #' @examples
 #' @return Object of type mesh3D
-#' modified_read.ply()
-
 
 modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
                                MatCol= 1, header_max = 30,

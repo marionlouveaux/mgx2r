@@ -6,10 +6,7 @@
 #' @keywords .ply, read
 #' @export
 #' @examples
-#' @import dplyr
 #' @return Object of type mesh3D
-#' modified_read.ply()
-
 
 modified_read.cellGraph <- function (fileCellGraph, header_max = 30)
 {
