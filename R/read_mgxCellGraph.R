@@ -8,7 +8,7 @@
 #' @examples
 #' @return Object of type mesh3D
 
-modified_read.cellGraph <- function (fileCellGraph, header_max = 30)
+read_mgxCellGraph <- function (fileCellGraph, header_max = 30)
 {
 
   #Read only chunk corresponding to header
