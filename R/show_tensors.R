@@ -5,7 +5,7 @@
 #' @param tensor_name The name of the tensor variable from cell graph to visualise.
 #' @inheritParams find_coords
 #'
-#' @importFrom dplyr inner_join mutate rename select
+#' @importFrom dplyr inner_join mutate rename starts_with select
 #' @importFrom glue glue
 #' @importFrom plotly add_trace layout
 #' @importFrom purrr pmap
@@ -14,7 +14,6 @@
 #'
 #' @examples
 #' @return a plotly graph
-#' show_tensors()
 
 show_tensors <- function(p,
                          cellGraph,
