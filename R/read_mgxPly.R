@@ -20,7 +20,7 @@
 #' @examples
 #' @return Object of type mesh3D
 
-modified_read.ply <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
+read_mgxPly <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,
                                MatCol= 1, header_max = 30,
                                my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
                                              "#008000", "#00FF00", "#008080", "#00FFFF",
