@@ -6,7 +6,7 @@ knitr::opts_chunk$set(
 
 ## ----lib, warning = FALSE, message = FALSE-------------------------------
 library(colorRamps)
-library(MorphoGraphX2R)
+library(mgx2r)
 library(magrittr)
 library(dplyr)
 library(plotly)
@@ -38,6 +38,11 @@ myCellGraph <- modified_read.cellGraph(fileCellGraph = fileCellGraph, header_max
 ## ------------------------------------------------------------------------
 meshCellcenter <- myCellGraph$vertices[,c("label","x", "y", "z")]
 
+#other way to define cell centers, without the cell graph
+vertexCellcenter <- purrr::map(1:ncol(myMesh$allColors$Col_label), ~ 
+  myMesh$it[ which(myMesh$allColors$Col_label[,.x] == names(which(table(myMesh$allColors$Col_label[,.x]) == 1))), .x ]
+)
+
 ## ----map3D---------------------------------------------------------------
 p1 <- plotlyMesh(meshExample = myMesh,
            meshColors = myMesh$allColors$Col_label,
@@ -59,95 +64,19 @@ p2 <- plotlyMesh(meshExample = myMesh,
 p2
 
 ## ----heatmap3D2, warning = FALSE, message = FALSE------------------------
-p3 <- plotlyMesh(meshExample = myMesh, 
+meshPlotly <- plotlyMesh(meshExample = myMesh, 
                 meshColors = NULL,
                 meshCellcenter = meshCellcenter)
 
-# Find coords
-find_coords <- function(cellcenter, tipUnit, d, scale = 1) {
-  d <- d*scale
-  # Distance
-  tip1 <- d / (sqrt(sum(tipUnit^2))) * tipUnit + cellcenter
-  tip2 <- (-d / (sqrt(sum(tipUnit^2))) * tipUnit) + cellcenter
-  tibble(x1 = tip1[1], y1 = tip1[2], z1 = tip1[3],
-         x2 = tip2[1], y2 = tip2[2], z2 = tip2[3])
-}
-
-# Test avec !!
-tensor_name <- "CellAxisPDG"
-grand.name <- glue("{tensor_name}.{c(1:3, 7)}")
-petit.name <- glue("{tensor_name}.{c(4:6, 8)}")
-
-tmp <- myCellGraph$vertices %>%
-  rename(
-    tipUnit.1 = !!grand.name[1],
-    tipUnit.2 = !!grand.name[2],
-    tipUnit.3 = !!grand.name[3],
-    d = !!grand.name[4],
-  ) %>%
-  mutate(grand = purrr::pmap(list(x, y, z, tipUnit.1, tipUnit.2, tipUnit.3, d),
-                             ~find_coords(cellcenter = c(..1, ..2, ..3),
-                                          tipUnit = c(..4, ..5, ..6),
-                                          d = ..7,
-                                          scale = 150))) %>%
-  tidyr::unnest(grand, .sep = ".") %>%
-  select(-starts_with("tipUnit"), -d) %>%
-  rename(
-    tipUnit.1 = !!petit.name[1],
-    tipUnit.2 = !!petit.name[2],
-    tipUnit.3 = !!petit.name[3],
-    d = !!petit.name[4],
-  ) %>%
-  mutate(petit = purrr::pmap(list(x, y, z, tipUnit.1, tipUnit.2, tipUnit.3, d),
-                             ~find_coords(cellcenter = c(..1, ..2, ..3),
-                                          tipUnit = c(..4, ..5, ..6),
-                                          d = ..7,
-                                          scale = 150))) %>%
-  tidyr::unnest(petit, .sep = ".") %>%
-  select(-starts_with("tipUnit"), -d) %>%
-  inner_join(myCellGraph$vertices)
-
-for (i in 1:nrow(tmp)){
-  xcoord <- as.vector(t(select(tmp, x, grand.x1, grand.x2)[i,]))
-  ycoord <- as.vector(t(select(tmp, y, grand.y1, grand.y2)[i,]))
-  zcoord <- as.vector(t(select(tmp, z, grand.z1, grand.z2)[i,]))
-  p3 <- add_trace(p3, x = xcoord, y = ycoord, z = zcoord,
-                 line = list(color = 'rgb(0, 0, 0)', width = 6), mode = "lines",
-                 type = "scatter3d", hoverinfo = 'none') %>%
-    layout(showlegend = FALSE)
-  
-  xcoord <- as.vector(t(select(tmp, x, petit.x1, petit.x2)[i,]))
-  ycoord <- as.vector(t(select(tmp, y, petit.y1, petit.y2)[i,]))
-  zcoord <- as.vector(t(select(tmp, z, petit.z1, petit.z2)[i,]))
-  p3 <- add_trace(p3, x = xcoord, y = ycoord, z = zcoord,
-                 line = list(color = 'rgb(0, 0, 0)', width = 6), mode = "lines",
-                 type = "scatter3d", hoverinfo = 'none') %>%
-    layout(showlegend = FALSE)
-
-}
-p3
+show_tensors(p = meshPlotly,
+             cellGraph = myCellGraph,
+             tensor_name = "CellAxisPDG",
+             scale = 150)
 
 ## ----cellContours--------------------------------------------------------
-vertexCellcenter <- purrr::map(1:ncol(myMesh$allColors$Col_label), ~ 
-  myMesh$it[ which(myMesh$allColors$Col_label[,.x] == names(which(table(myMesh$allColors$Col_label[,.x]) == 1))), .x ]
-)
-
-edgesCoords <- purrr::map(1:ncol(myMesh$allColors$Col_label), ~ 
-  myMesh$vb[,myMesh$it[ which(myMesh$allColors$Col_label[,.x] != names(which(table(myMesh$allColors$Col_label[,.x])==1))), .x]]
-)
-
-p4 <- plotlyMesh(meshExample = myMesh,
+meshPlotly <- plotlyMesh(meshExample = myMesh,
            meshColors = NULL)
 
-for (i in 1:length(unique(edgesCoords))){
-  edge_tmp <- unique(edgesCoords)[[i]]
-  xcoord <- edge_tmp[1,]
-  ycoord <- edge_tmp[2,]
-  zcoord <- edge_tmp[3,]
-  p4 <- add_trace(p4, x = xcoord, y = ycoord, z = zcoord,
-                 line = list(color = 'rgb(255, 255, 255)', width = 6), mode = "lines",
-                 type = "scatter3d", hoverinfo = 'none') %>%
-    layout(showlegend = FALSE)
-}
-p4
+show_cellcontour(p = meshPlotly, mesh = myMesh)
+
 

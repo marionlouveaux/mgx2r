@@ -28,7 +28,7 @@ library(colorRamps)
 library(dplyr)
 library(plotly)
 library(purrr)
-library(MorphoGraphX2R)
+library(mgx2r)
 ```
 
 

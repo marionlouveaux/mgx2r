@@ -9,7 +9,7 @@ library(colorRamps)
 library(dplyr)
 library(plotly)
 library(purrr)
-library(MorphoGraphX2R)
+library(mgx2r)
 
 ## ---- warning = FALSE, message = FALSE-----------------------------------
 ply.dir <- system.file("extdata", "normalMesh/", package = "MorphoGraphX2R")

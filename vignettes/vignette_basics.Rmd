@@ -27,7 +27,7 @@ This vignette requires the MorphoGraphX2R, as well as some other additionnal pac
 
 ```{r lib, warning = FALSE, message = FALSE}
 library(colorRamps)
-library(MorphoGraphX2R)
+library(mgx2r)
 library(magrittr)
 library(dplyr)
 library(plotly)
