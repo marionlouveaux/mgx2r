@@ -15,9 +15,6 @@ ucharHelp(ppty, file = file, toSkip = toSkip, Nlines = Nlines)
 
 \item{Nlines}{number of face or vertices}
 }
-\value{
-ucharHelp()
-}
 \description{
 Identify and sort uchar in the properties of vertices and faces
 }

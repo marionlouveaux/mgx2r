@@ -16,7 +16,6 @@ mesh3D2ply_clust(mesh = mesh, filename = "my_ply.ply",
 }
 \value{
 a .ply file readable by MorphoGraphX
-mesh3D2ply_clust()
 }
 \description{
 original code: 2016-09-11_mesh3D_to_ply_clust

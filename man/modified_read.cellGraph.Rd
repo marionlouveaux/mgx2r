@@ -13,10 +13,9 @@ modified_read.cellGraph(fileCellGraph, header_max = 30)
 }
 \value{
 Object of type mesh3D
-modified_read.ply()
 }
 \description{
-This function is a modified version of read.ply function from geomorph R package to specifically read MGX ply files.
+This function is a modified version of read.ply function from geomorph R package to specifically read MGX cell graph ply files.
 }
 \keyword{.ply,}
 \keyword{read}

@@ -18,9 +18,7 @@ plotlyMesh(meshExample, meshColors = NULL, meshCellcenter = NULL,
 }
 \value{
 plotly graph
-plotlyMesh()
 }
 \description{
 This function provides a basic layout for plotly graphs used to display MGX meshes.
 }
-\keyword{plotly}

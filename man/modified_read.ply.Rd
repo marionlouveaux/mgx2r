@@ -24,10 +24,9 @@ modified_read.ply(file, ShowSpecimen = TRUE, addNormals = TRUE,
 }
 \value{
 Object of type mesh3D
-modified_read.ply()
 }
 \description{
-This function is a modified version of read.ply function from geomorph R package to specifically read MGX ply files.
+This function is a modified version of read.ply function from geomorph R package to specifically read MGX mesh ply files.
 }
 \keyword{.ply,}
 \keyword{read}
