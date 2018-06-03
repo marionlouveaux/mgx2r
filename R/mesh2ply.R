@@ -1,8 +1,7 @@
 #' Write a ply format for MorphoGraphX from a mesh3D R object
 #'
-#' original code: 2016-09-11_mesh3D_to_ply_clust
 #' @param mesh a 3D (triangular) mesh object
-#' @param filename the filename we want to give to the .ply file
+#' @param filename the name we want to give to the created .ply file
 #' @param label_it_for_mesh triangle color
 #'
 #' @importFrom dplyr as_tibble bind_cols mutate
@@ -16,7 +15,7 @@
 #' @examples
 #' @return a .ply file readable by MorphoGraphX
 
-mesh3D2ply_clust <- function(mesh = mesh,
+mesh2ply <- function(mesh = mesh,
                              filename = "my_ply.ply",
                              label_it_for_mesh = mesh$label_it){
 
@@ -28,13 +27,6 @@ mesh3D2ply_clust <- function(mesh = mesh,
   if(length(unique_it) < ncol(mesh$it)){
     warning("Mesh has duplicated triangles.")
   }
-
-  # triangles_IDs <- cbind( format(rep(3, ncol(mesh$it)), scientific = FALSE) #format has to be applied column by column
-  #                         , format(mesh$it[1,]-1, scientific = FALSE)
-  #                         , format(mesh$it[2,]-1, scientific = FALSE)
-  #                         , format(mesh$it[3,]-1, scientific = FALSE)
-  #                         , format(label_it_for_mesh, scientific = FALSE)
-  # )
 
   triangles_IDs <- t(mesh$it) %>%
     -1 %>%
@@ -56,9 +48,9 @@ mesh3D2ply_clust <- function(mesh = mesh,
   # vertices with associated label (label is expected to be a numeric)
   res2 <- matrix(as.numeric(unlist(strsplit( unique(res), split = "_"))), byrow = TRUE, ncol = 2)
 
-  # Repeted vertices will receive label -1
+  # Repeated vertices will receive label -1
   rep_vb_ind <- which(table(res2[,1]) > 1)
-  row_ind <- res2[,1] %in% rep_vb_ind #les elements qui sont répétés (TRUE) ou non (FALSE)
+  row_ind <- res2[,1] %in% rep_vb_ind # elements that are repeated (TRUE) or not (FALSE)
   res2[row_ind, 2] <- -1
 
   # Missing vertices (not associated to a triangle), will also receive label -1
@@ -72,18 +64,6 @@ mesh3D2ply_clust <- function(mesh = mesh,
   label_vb_tmp <- rbind(res2,
                         cbind(single_vb, rep(-1, length(single_vb))))
   label_vb <- label_vb_tmp[order(label_vb_tmp[,1]),]
-
-  # res3 <- res2[order(res2[,1]),]
-  # res3_tmp <- res3
-  # res3_indices <- which(table(res3_tmp[,1]) >1) ###PB HERE: I DON'T FIND REPETED VERTICES
-  # row_ind <- res3_tmp[,1] %in% res3_indices #les elements qui sont répétés (TRUE) ou non (FALSE)
-  # res3_tmp[row_ind, 2] <- -1
-  # res4 <- unique(res3_tmp[ , 2])
-
-
-
-  #on veut la colonne 2, pas la 1; et uniquement les valeurs non redondantes (par rapport à la colonne 1)
-  #res4 donne le label des vertex: -1 si entre 2 cellules et label sinon
 
   vertex_coord <- cbind( format(mesh$vb[1,], scientific = FALSE) # format has to be applied column by column
                          ,format(mesh$vb[2,], scientific = FALSE)
