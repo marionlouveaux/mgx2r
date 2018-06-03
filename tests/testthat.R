@@ -1,4 +1,4 @@
 library(testthat)
-library(MorphoGraphX2R)
+library(mgx2r)
 
-test_check("MorphoGraphX2R")
+test_check("mgx2r")
