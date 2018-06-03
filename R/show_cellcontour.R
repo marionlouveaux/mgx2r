@@ -3,6 +3,8 @@
 #' @param p a plotly graph created with plotlyMesh()
 #' @param mesh the mesh used to create this plotly graph
 #'
+#' @importFrom plotly add_trace layout
+#' @importFrom purrr map
 #' @return
 #' @export
 #'
@@ -11,7 +13,7 @@
 
 show_cellcontour <- function(p, mesh) {
 
-  edgesCoords <- purrr::map(1:ncol(myMesh$allColors$Col_label), ~
+  edgesCoords <- map(1:ncol(myMesh$allColors$Col_label), ~
                               myMesh$vb[,myMesh$it[ which(myMesh$allColors$Col_label[,.x] != names(which(table(myMesh$allColors$Col_label[,.x])==1))), .x]]
   )
 

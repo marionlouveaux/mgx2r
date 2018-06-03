@@ -5,7 +5,12 @@
 #' @param meshColors to display colored on the mesh
 #' @param meshCellcenter to display the center of (biological) cells on the mesh
 #' @param defaultColor hex code of color to give by default to the mesh as well as percentage of opacity
-#' @keywords plotly
+#'
+#' @importFrom colorRamps matlab.like
+#' @importFrom dplyr pull
+#' @importFrom plotly add_trace layout plot_ly
+#' @importFrom purrr map2
+#' @keywords
 #' @export
 #' @examples
 #' @return plotly graph
@@ -30,7 +35,7 @@ plotlyMesh <- function(meshExample,
     }else{
       makeColorScale <- TRUE
       colorCut <- cut(pull(meshColors), 15,
-                      labels =  colorRamps::matlab.like(15)
+                      labels =  matlab.like(15)
       )
       color <- as.character(colorCut)
       opacity <- 1
@@ -67,24 +72,10 @@ plotlyMesh <- function(meshExample,
                                  tickfont = list(size = 12),
                                  titlefont = list(size = 20)
                                ),
-                                colorscale = purrr::map2(.x = seq(0,1, len=15),
+                                colorscale = map2(.x = seq(0,1, len=15),
                                                          .y = matlab.like(15),
                                                          ~ list(.x, .y)),
-                               # colorscale = list(c(0, "#0000aa"), # list needs to be between 0 and 1, check why interval is not cut with evenly spaced breaks
-                               #                   list(0.2, "#0033d4"),
-                               #                   list(0.24, "#0066ff"),
-                               #                   list(0.28, "#0099ff"),
-                               #                   list(0.32, "#00ccff"),
-                               #                   list(0.36, "#33ffff"),
-                               #                   list(0.4, "#66ffcc"),
-                               #                   list(0.44, "#99ff99"),
-                               #                   list(0.48, "#ccff66"),
-                               #                   list(0.52, "#ffff33"),
-                               #                   list(0.56, "#ffcc00"),
-                               #                   list(0.6, "#ff9900"),
-                               #                   list(0.64, "#ff6600"),
-                               #                   list(0.8, "#d53300"),
-                               #                   list(1, "#aa0000")),
+                               # list needs to be between 0 and 1
                                line = list(width = 0),
                                opacity = 0.1,
                                showscale = TRUE,

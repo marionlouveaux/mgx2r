@@ -4,6 +4,12 @@
 #' @param mesh a 3D (triangular) mesh object
 #' @param filename the filename we want to give to the .ply file
 #' @param label_it_for_mesh triangle color
+#'
+#' @importFrom dplyr as.tibble bind_cols mutate
+#' @importFrom glue collapse
+#' @importFrom parallel detectCores
+#' @importFrom purrr map
+#' @importFrom snow makeCluster parApply stopCluster
 #' @keywords mesh3D, ply
 #' @export
 #' @examples
@@ -18,8 +24,8 @@ mesh3D2ply_clust <- function(mesh = mesh,
   #1. Triangles
 
   # checking that triangles are unique (by ordering and gluing vertex labels together)
-  unique_it <- unique(unlist(purrr::map(.x = 1:ncol(mesh$it),
-                                        ~ glue::collapse(sort(mesh$it[,.]), sep = "_") )))
+  unique_it <- unique(unlist(map(.x = 1:ncol(mesh$it),
+                                        ~ collapse(sort(mesh$it[,.]), sep = "_") )))
   if(length(unique_it) < ncol(mesh$it)){
     warning("Mesh has duplicated triangles.")
   }
@@ -33,9 +39,9 @@ mesh3D2ply_clust <- function(mesh = mesh,
 
   triangles_IDs <- t(mesh$it) %>%
     -1 %>%
-    tibble::as.tibble(.) %>%
-    dplyr::bind_cols(meshtype = rep(3, nrow(.)), .) %>%
-    dplyr::mutate(., label = label_it_for_mesh)
+    as.tibble(.) %>%
+    bind_cols(meshtype = rep(3, nrow(.)), .) %>%
+    mutate(., label = label_it_for_mesh)
 
 
   #2. Vertices
@@ -44,9 +50,9 @@ mesh3D2ply_clust <- function(mesh = mesh,
                             cbind( mesh$it[2,]-1, label_it_for_mesh ),
                             cbind( mesh$it[3,]-1, label_it_for_mesh ) )
 
-  cl <- snow::makeCluster(parallel::detectCores() - 1)
-  res <- snow::parApply(cl, triangles_label, 1, function(i){ paste(i[1], i[2], sep = "_") })
-  snow::stopCluster(cl)
+  cl <- makeCluster(detectCores() - 1)
+  res <- parApply(cl, triangles_label, 1, function(i){ paste(i[1], i[2], sep = "_") })
+  stopCluster(cl)
 
   # vertices with associated label (label is expected to be a numeric)
   res2 <- matrix(as.numeric(unlist(strsplit( unique(res), split = "_"))), byrow = TRUE, ncol = 2)

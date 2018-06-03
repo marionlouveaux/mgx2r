@@ -5,6 +5,7 @@
 #' @param d norm of the vector
 #' @param scale shorten or lengthen the line for visualisation
 #'
+#' @importFrom dplyr tibble
 #' @return
 #' @export
 #'

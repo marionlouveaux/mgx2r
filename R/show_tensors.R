@@ -3,7 +3,13 @@
 #' @param p A plot created with plotlyMesh() function.
 #' @param cellGraph A cell graph created with read_cellGraph().
 #' @param tensor_name The name of the tensor variable from cell graph to visualise.
+#' @inheritParams find_coords
 #'
+#' @importFrom dplyr inner_join mutate rename select
+#' @importFrom glue glue
+#' @importFrom plotly add_trace layout
+#' @importFrom purrr pmap
+#' @importFrom tidyr unnest
 #' @export
 #'
 #' @examples
@@ -23,27 +29,27 @@ show_tensors <- function(p,
       tipUnit.1 = !!long.name[1],
       tipUnit.2 = !!long.name[2],
       tipUnit.3 = !!long.name[3],
-      d = !!long.name[4],
+      d = !!long.name[4]
     ) %>%
-    mutate(long = purrr::pmap(list(x, y, z, tipUnit.1, tipUnit.2, tipUnit.3, d),
+    mutate(long = pmap(list(x, y, z, tipUnit.1, tipUnit.2, tipUnit.3, d),
                               ~find_coords(cellcenter = c(..1, ..2, ..3),
                                            tipUnit = c(..4, ..5, ..6),
                                            d = ..7,
                                            scale = scale))) %>%
-    tidyr::unnest(long, .sep = ".") %>%
+    unnest(long, .sep = ".") %>%
     select(-starts_with("tipUnit"), -d) %>%
     rename(
       tipUnit.1 = !!short.name[1],
       tipUnit.2 = !!short.name[2],
       tipUnit.3 = !!short.name[3],
-      d = !!short.name[4],
+      d = !!short.name[4]
     ) %>%
-    mutate(short = purrr::pmap(list(x, y, z, tipUnit.1, tipUnit.2, tipUnit.3, d),
+    mutate(short = pmap(list(x, y, z, tipUnit.1, tipUnit.2, tipUnit.3, d),
                                ~find_coords(cellcenter = c(..1, ..2, ..3),
                                             tipUnit = c(..4, ..5, ..6),
                                             d = ..7,
                                             scale = scale))) %>%
-    tidyr::unnest(short, .sep = ".") %>%
+    unnest(short, .sep = ".") %>%
     select(-starts_with("tipUnit"), -d) %>%
     inner_join(cellGraph$vertices)
 
