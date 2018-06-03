@@ -14,12 +14,12 @@ library(glue)
 library(RColorBrewer)
 
 ## ----myData--------------------------------------------------------------
-filePly <- system.file("extdata", "normalMesh/2013-02-12_LTi6B_dis_A_T0_cells_minW1_normalMesh.ply", package = "MorphoGraphX2R")
+filePly <- system.file("extdata", "normalMesh/2013-02-12_LTi6B_dis_A_T0_cells_minW1_normalMesh.ply", package = "mgx2r")
 
-fileCellGraph <- system.file("extdata",  "cellGraph/2013-02-12_LTi6B_dis_A_T0_cells_minW1_cellGraph.ply", package = "MorphoGraphX2R")
+fileCellGraph <- system.file("extdata",  "cellGraph/2013-02-12_LTi6B_dis_A_T0_cells_minW1_cellGraph.ply", package = "mgx2r")
 
 ## ----readPly, warning = FALSE, message = FALSE---------------------------
-myMesh <- modified_read.ply(file = filePly, ShowSpecimen = FALSE, addNormals = TRUE,
+myMesh <- read_mgxPly(file = filePly, ShowSpecimen = FALSE, addNormals = TRUE,
                                MatCol= 1, header_max = 30,
                                my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
                                              "#008000", "#00FF00", "#008080", "#00FFFF",
@@ -33,7 +33,7 @@ myMesh <- modified_read.ply(file = filePly, ShowSpecimen = FALSE, addNormals = T
 #  rgl::shade3d(myMesh)
 
 ## ----readCellGraph-------------------------------------------------------
-myCellGraph <- modified_read.cellGraph(fileCellGraph = fileCellGraph, header_max = 30)
+myCellGraph <- read_mgxCellGraph(fileCellGraph = fileCellGraph, header_max = 30)
 
 ## ------------------------------------------------------------------------
 meshCellcenter <- myCellGraph$vertices[,c("label","x", "y", "z")]
