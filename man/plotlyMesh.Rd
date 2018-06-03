@@ -8,13 +8,13 @@ plotlyMesh(meshExample, meshColors = NULL, meshCellcenter = NULL,
   defaultColor = list("#CCCCFF", 0.2))
 }
 \arguments{
-\item{meshExample}{mesh loaded with the modified_read.ply function}
+\item{meshExample}{Mesh loaded with the modified_read.ply function.}
 
-\item{meshColors}{to display colored on the mesh}
+\item{meshColors}{To display colored on the mesh.}
 
-\item{meshCellcenter}{to display the center of (biological) cells on the mesh}
+\item{meshCellcenter}{To display the center of (biological) cells on the mesh.}
 
-\item{defaultColor}{hex code of color to give by default to the mesh as well as percentage of opacity}
+\item{defaultColor}{Hex code of color to give by default to the mesh as well as percentage of opacity.}
 }
 \value{
 plotly graph

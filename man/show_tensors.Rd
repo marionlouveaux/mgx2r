@@ -13,7 +13,7 @@ show_tensors(p, cellGraph, tensor_name, scale = 1)
 
 \item{tensor_name}{The name of the tensor variable from cell graph to visualise.}
 
-\item{scale}{shorten or lengthen the line for visualisation}
+\item{scale}{Shorten or lengthen the line for visualisation.}
 }
 \value{
 a plotly graph

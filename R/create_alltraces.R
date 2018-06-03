@@ -4,10 +4,12 @@
 #' @param graphExample One or several cell graphs.
 #' @param meshColors Colors for each mesh.
 #' @param display Display type. 'labels', 'heatmap' or 'none'.
-#' @param defaultColor Mesh color if 'none' display type is chosen (HEX color and alpha value between 0 and 1).
+#' @param defaultColor Uniform mesh color (HEX color and alpha value between 0 and 1). Needed only if 'none' display type is chosen.
 #' @param heatmapParam Variable (from cell graph) to display if 'heatmap' display type is selected.
 #'
-#' @return
+#' @importFrom colorRamps matlab.like
+#' @importFrom dplyr left_join pull select
+#' @return A list.
 #'
 #' @examples
 
@@ -45,7 +47,7 @@ create_alltraces <- function(meshExample,
       opacity <- 1
     }else if (is.null(heatmapParam) == FALSE){
       meshColors <- left_join(meshExample$it_label, graphExample$vertices) %>%
-        select_(., heatmapParam)
+        select(., heatmapParam)
       makeColorScale <- TRUE
       colorCut <- cut(pull(meshColors), 15,
                       labels =  matlab.like(15)

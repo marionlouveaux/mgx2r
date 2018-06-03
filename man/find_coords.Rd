@@ -7,13 +7,13 @@
 find_coords(cellcenter, tipUnit, d, scale = 1)
 }
 \arguments{
-\item{cellcenter}{x, y, z coordinates}
+\item{cellcenter}{x, y, z coordinates.}
 
-\item{tipUnit}{x, y, z coordinates}
+\item{tipUnit}{x, y, z coordinates.}
 
-\item{d}{norm of the vector}
+\item{d}{Norm of the vector.}
 
-\item{scale}{shorten or lengthen the line for visualisation}
+\item{scale}{Shorten or lengthen the line for visualisation.}
 }
 \description{
 Find coordinates of a tensor

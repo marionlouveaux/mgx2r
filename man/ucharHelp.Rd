@@ -7,13 +7,13 @@
 ucharHelp(ppty, file = file, toSkip = toSkip, Nlines = Nlines)
 }
 \arguments{
-\item{ppty}{lines containing the properties info in the header of the .ply}
+\item{ppty}{Lines containing the properties info in the header of the .ply.}
 
-\item{file}{ply file}
+\item{file}{Ply file.}
 
-\item{toSkip}{to skip when reading the file (either headerend or headerend+nvertices if reading the face ppty)}
+\item{toSkip}{To skip when reading the file (either headerend or headerend+nvertices if reading the face ppty).}
 
-\item{Nlines}{number of face or vertices}
+\item{Nlines}{Number of face or vertices.}
 }
 \description{
 Identify and sort uchar in the properties of vertices and faces

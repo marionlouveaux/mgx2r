@@ -2,15 +2,12 @@
 #'
 #' This function provides a basic layout for plotly graphs with a time sliders.
 #' It can be used to display MGX meshes of a time serie.
-#' @param meshExample
-#' @param graphExample
-#' @param meshColors
-#' @param display
-#' @param defaultColor
-#' @param heatmapParam
 #'
-#' @importFrom create_alltraces
-#' @return
+#' @inheritParams create_alltraces
+#'
+#' @importFrom plotly add_trace layout plot_ly
+#' @importFrom purrr pmap
+#' @return plotly graph
 #' @export
 #'
 #' @examples

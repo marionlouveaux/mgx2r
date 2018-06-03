@@ -7,9 +7,9 @@
 show_cellcontour(p, mesh)
 }
 \arguments{
-\item{p}{a plotly graph created with plotlyMesh()}
+\item{p}{A plotly graph created with plotlyMesh().}
 
-\item{mesh}{the mesh used to create this plotly graph}
+\item{mesh}{The mesh used to create this plotly graph.}
 }
 \description{
 Add cell contour visualisation to a plotly graph of type mesh3d
