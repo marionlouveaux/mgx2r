@@ -1,8 +1,8 @@
 #' Write a ply format for MorphoGraphX from a mesh3D R object
 #'
-#' @param mesh a 3D (triangular) mesh object
-#' @param filename the name we want to give to the created .ply file
-#' @param label_it_for_mesh triangle color
+#' @param mesh A 3D (triangular) mesh object.
+#' @param filename The name we want to give to the created .ply file.
+#' @param label_it_for_mesh Triangle color.
 #'
 #' @importFrom dplyr as_tibble bind_cols mutate
 #' @importFrom glue collapse

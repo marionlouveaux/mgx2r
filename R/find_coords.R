@@ -1,9 +1,9 @@
 #' Find coordinates of a tensor
 #'
-#' @param cellcenter x, y, z coordinates
-#' @param tipUnit x, y, z coordinates
-#' @param d norm of the vector
-#' @param scale shorten or lengthen the line for visualisation
+#' @param cellcenter x, y, z coordinates.
+#' @param tipUnit x, y, z coordinates.
+#' @param d Norm of the vector.
+#' @param scale Shorten or lengthen the line for visualisation.
 #'
 #' @importFrom dplyr tibble
 #' @return

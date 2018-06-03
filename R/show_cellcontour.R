@@ -1,7 +1,7 @@
 #' Add cell contour visualisation to a plotly graph of type mesh3d
 #'
-#' @param p a plotly graph created with plotlyMesh()
-#' @param mesh the mesh used to create this plotly graph
+#' @param p A plotly graph created with plotlyMesh().
+#' @param mesh The mesh used to create this plotly graph.
 #'
 #' @importFrom plotly add_trace layout
 #' @importFrom purrr map

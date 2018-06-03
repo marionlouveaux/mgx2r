@@ -1,10 +1,10 @@
 #' A layout for plotly graphs
 #'
 #' This function provides a basic layout for plotly graphs used to display MGX meshes.
-#' @param meshExample mesh loaded with the modified_read.ply function
-#' @param meshColors to display colored on the mesh
-#' @param meshCellcenter to display the center of (biological) cells on the mesh
-#' @param defaultColor hex code of color to give by default to the mesh as well as percentage of opacity
+#' @param meshExample Mesh loaded with the modified_read.ply function.
+#' @param meshColors To display colored on the mesh.
+#' @param meshCellcenter To display the center of (biological) cells on the mesh.
+#' @param defaultColor Hex code of color to give by default to the mesh as well as percentage of opacity.
 #'
 #' @importFrom colorRamps matlab.like
 #' @importFrom dplyr pull
