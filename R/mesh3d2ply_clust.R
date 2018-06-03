@@ -5,17 +5,16 @@
 #' @param filename the filename we want to give to the .ply file
 #' @param label_it_for_mesh triangle color
 #'
-#' @importFrom dplyr as.tibble bind_cols mutate
+#' @importFrom dplyr as_tibble bind_cols mutate
 #' @importFrom glue collapse
 #' @importFrom parallel detectCores
 #' @importFrom purrr map
 #' @importFrom snow makeCluster parApply stopCluster
+#' @importFrom utils write.table
 #' @keywords mesh3D, ply
 #' @export
 #' @examples
-#' @importFrom utils "write.table"
 #' @return a .ply file readable by MorphoGraphX
-#' mesh3D2ply_clust()
 
 mesh3D2ply_clust <- function(mesh = mesh,
                              filename = "my_ply.ply",
@@ -39,7 +38,7 @@ mesh3D2ply_clust <- function(mesh = mesh,
 
   triangles_IDs <- t(mesh$it) %>%
     -1 %>%
-    as.tibble(.) %>%
+    as_tibble(.) %>%
     bind_cols(meshtype = rep(3, nrow(.)), .) %>%
     mutate(., label = label_it_for_mesh)
 
