@@ -40,12 +40,12 @@ Some .ply demonstration data coming from my PhD thesis are attached to this pack
 ply.dir <- system.file("extdata", "normalMesh/", package = "mgx2r")
 
 mesh.all <- map(list.files(ply.dir, recursive = TRUE, full.names = TRUE),
-                ~ modified_read.ply(file = .x, ShowSpecimen = FALSE))
+                ~ read_mgxPly(file = .x, ShowSpecimen = FALSE))
 
 
 graph.dir <- system.file("extdata", "cellGraph/", package = "mgx2r")
 
-cellGraph.all <- map(list.files(graph.dir, recursive = TRUE, full.names = TRUE), ~modified_read.cellGraph(fileCellGraph = .x, header_max = 30))
+cellGraph.all <- map(list.files(graph.dir, recursive = TRUE, full.names = TRUE), ~read_mgxCellGraph(fileCellGraph = .x, header_max = 30))
 ```
 
 
