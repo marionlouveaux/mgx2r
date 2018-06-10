@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: c(person("Marion", "Louveaux", email = "marion.louveaux@gmail.com", role = c("aut", "cre")),
     person("Sébastien", "Rochette", email = "sebastien@thinkr.fr", role = c("aut")) )
 Description: Import mesh and cell graph files from MorphoGraphX software as tidy dataframes.
-    Propose visualization solutions for mesh and cell graph files from MorphoGraphX with Plotly and Shiny.
+    Propose visualization solutions for mesh and cell graph files from MorphoGraphX with Plotly and Shiny using the library cellviz3d.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -25,5 +25,6 @@ Suggests:
     knitr,
     rmarkdown,
     RColorBrewer,
-    testthat
+    testthat,
+    cellviz3d
 VignetteBuilder: knitr
