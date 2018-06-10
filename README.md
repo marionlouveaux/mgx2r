@@ -24,9 +24,9 @@ Some .ply demonstration data coming from my PhD thesis are attached to this pack
 
 ``` r
 ### Full datataset
-filePly <- system.file("extdata", "full/normalMesh/2013-02-12_LTi6B_dis_A_T0_cells_minW1_normalMesh.ply", package = "mgx2r")
+filePly <- system.file("extdata", "full/mesh/mesh_meristem_full_T0.ply", package = "mgx2r")
 
-fileCellGraph <- system.file("extdata",  "full/cellGraph/2013-02-12_LTi6B_dis_A_T0_cells_minW1_cellGraph.ply", package = "mgx2r")
+fileCellGraph <- system.file("extdata",  "full/cellGraph/cellGraph_meristem_full_T0.ply", package = "mgx2r")
 ```
 
 The mesh data are read and converted as mesh 3D using the read\_mgxPly function. They contain informatons relative to the geometry of the plant tissue.
@@ -64,3 +64,5 @@ p1
 ```
 
 <img src="https://github.com/marionlouveaux/mgx2r/blob/master/inst/img/full/p1labels.png" width="100%" />
+
+Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.

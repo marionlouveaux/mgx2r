@@ -23,6 +23,16 @@ usethis::use_package("RColorBrewer", type = "Suggests")
 
 usethis::use_readme_rmd()
 usethis::use_news_md()
+usethis::use_code_of_conduct()
 
 # Vignette ----
 devtools::build_vignettes()
+
+# GitHub ----
+usethis::browse_github_pat()
+usethis::edit_r_environ()
+# Be sure to have a ssh key stored in Github or use 'protocol="https"'
+# https://github.com/settings/keys
+usethis::use_github()
+usethis::use_github_links()
+
