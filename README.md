@@ -18,29 +18,49 @@ devtools::install_github("marionlouveaux/mgx2r")
 Example
 -------
 
-This is a basic example which shows you how to solve a common problem:
+### Read dataset
+
+Some .ply demonstration data coming from my PhD thesis are attached to this package. This dataset is a timelapse recording of the development of a shoot apical meristem of the plant expressing a membrane marker. I took one 3D stack every 12h and have 5 timepoints in total. For more information regarding the generation of this dataset, see `help("mgx2r")`.
 
 ``` r
-## basic example code
+### Full datataset
+filePly <- system.file("extdata", "full/normalMesh/2013-02-12_LTi6B_dis_A_T0_cells_minW1_normalMesh.ply", package = "mgx2r")
+
+fileCellGraph <- system.file("extdata",  "full/cellGraph/2013-02-12_LTi6B_dis_A_T0_cells_minW1_cellGraph.ply", package = "mgx2r")
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+The mesh data are read and converted as mesh 3D using the read\_mgxPly function. They contain informatons relative to the geometry of the plant tissue.
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+library(mgx2r)
+myMesh <- read_mgxPly(file = filePly, ShowSpecimen = FALSE, addNormals = TRUE,
+                               MatCol= 1, header_max = 30,
+                               my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
+                                             "#008000", "#00FF00", "#008080", "#00FFFF",
+                                             "#000080", "#0000FF", "#800080", "#FF00FF"))
+#> [1] "Object has 7763 faces and 4158 vertices."
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
+The cell graph data are read and converted as mesh 3D using the read\_mgxCellGraph function. They contain data relative to the area of the cells and local curvature of the tissue.
 
-You can also embed plots, for example:
+``` r
+myCellGraph <- read_mgxCellGraph(fileCellGraph = fileCellGraph, header_max = 30)
+```
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+### Visualise using {cellviz3d}
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+The mesh and cell graph data can be visualised using the package [{cellviz3d}](https://github.com/marionlouveaux/cellviz3d):
+
+``` r
+library(cellviz3d)
+meshCellcenter <- myCellGraph$vertices[,c("label","x", "y", "z")]
+
+p1 <- plotlyMesh(meshExample = myMesh,
+                 meshColors = myMesh$allColors$Col_label,
+                 meshCellcenter = meshCellcenter) %>%
+  plotly::layout(scene = list(aspectmode = "data"))
+
+p1
+```
+
+<img src="https://github.com/marionlouveaux/mgx2r/blob/master/inst/img/full/p1labels.png" width="100%" />
