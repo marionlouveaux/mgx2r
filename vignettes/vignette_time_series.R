@@ -24,6 +24,10 @@ knitr::opts_chunk$set(
 #  
 #  cellGraph.all <- map(list.files(graph.dir, recursive = TRUE, full.names = TRUE), ~read_mgxCellGraph(fileCellGraph = .x, header_max = 30))
 
+## ---- eval=FALSE, echo=FALSE---------------------------------------------
+#  saveRDS(mesh.all, file = "mesh_meristem_full_all.rds")
+#  saveRDS(cellGraph.all, file = "cellGraph_meristem_full_all.rds")
+
 ## ---- warning = FALSE, message = FALSE, eval=FALSE-----------------------
 #  meshColors.all <- list(NULL, NULL, NULL, NULL, NULL)
 #  

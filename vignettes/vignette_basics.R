@@ -4,38 +4,46 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ----lib, warning = FALSE, message = FALSE, eval=FALSE-------------------
-#  library(colorRamps)
-#  library(mgx2r)
-#  library(magrittr)
-#  library(dplyr)
-#  library(plotly)
-#  library(glue)
-#  library(RColorBrewer)
-#  
+## ----lib, warning = FALSE, message = FALSE, eval=TRUE--------------------
+library(colorRamps)
+library(mgx2r)
+library(magrittr)
+library(dplyr)
+library(plotly)
+library(glue)
+library(RColorBrewer)
+
+## ----libdev, warning = FALSE, message = FALSE, eval=FALSE----------------
+#  # devtools::install_github("marionlouveaux/cellviz3d")
 #  library(cellviz3d)
 
-## ----myData, eval=FALSE--------------------------------------------------
-#  # Choose one of the two datasets. Generating plots with the full dataset might be slow.
-#  
-#  ### Full datataset
-#  filePly <- system.file("extdata", "full/normalMesh/2013-02-12_LTi6B_dis_A_T0_cells_minW1_normalMesh.ply", package = "mgx2r")
-#  
-#  fileCellGraph <- system.file("extdata",  "full/cellGraph/2013-02-12_LTi6B_dis_A_T0_cells_minW1_cellGraph.ply", package = "mgx2r")
-#  
-#  
+## ----myData, eval=TRUE---------------------------------------------------
+### Full datataset
+filePly <- system.file("extdata", "full/mesh/mesh_meristem_full_T0.ply", package = "mgx2r")
+
+fileCellGraph <- system.file("extdata",  "full/cellGraph/cellGraph_meristem_full_T0.ply", package = "mgx2r")
+
+
+## ---- eval=FALSE---------------------------------------------------------
 #  ### Cropped dataset
-#  filePly <- system.file("extdata", "cropped/normalMesh/2013-02-12_LTi6B_dis_A_T12h_cells_minW1_cropped_normalMesh.ply", package = "mgx2r")
+#  filePly <- system.file("extdata", "cropped/mesh/mesh_meristem_cropped_T0.ply", package = "mgx2r")
 #  
-#  fileCellGraph <- system.file("extdata",  "cropped/cellGraph/2013-02-12_LTi6B_dis_A_T12h_cells_minW1_cropped_cellGraph.ply", package = "mgx2r")
+#  fileCellGraph <- system.file("extdata",  "cropped/cellGraph/cellGraph_meristem_cropped_T0.ply", package = "mgx2r")
 #  
 
-## ----readPly, warning = FALSE, message = FALSE, eval=FALSE---------------
-#  myMesh <- read_mgxPly(file = filePly, ShowSpecimen = FALSE, addNormals = TRUE,
-#                                 MatCol= 1, header_max = 30,
-#                                 my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
-#                                               "#008000", "#00FF00", "#008080", "#00FFFF",
-#                                               "#000080", "#0000FF", "#800080", "#FF00FF"))
+## ----readPly, warning = FALSE, message = FALSE, eval=TRUE----------------
+mgx_palette <- c("#800000", "#FF0000", "#808000", "#FFFF00",
+                "#008000", "#00FF00", "#008080", "#00FFFF",
+                "#000080", "#0000FF", "#800080", "#FF00FF")
+
+myMesh <- read_mgxPly(
+  file = filePly, ShowSpecimen = FALSE, addNormals = TRUE,
+  MatCol= 1, header_max = 30,
+  my_colors = mgx_palette)
+str(myMesh, max.level = 1)
+
+## ---- eval=FALSE, echo=FALSE---------------------------------------------
+#  saveRDS(myMesh, file = "mesh_meristem_full_T0.rds")
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  rgl::shade3d(myMesh)
@@ -44,16 +52,20 @@ knitr::opts_chunk$set(
 #  myMesh$material$color <- myMesh$allColors$Col_signal
 #  rgl::shade3d(myMesh)
 
-## ----readCellGraph, eval=FALSE-------------------------------------------
-#  myCellGraph <- read_mgxCellGraph(fileCellGraph = fileCellGraph_big, header_max = 30)
+## ----readCellGraph, eval=TRUE--------------------------------------------
+myCellGraph <- read_mgxCellGraph(fileCellGraph = fileCellGraph, header_max = 30)
+myCellGraph
+
+## ---- eval=FALSE, echo=FALSE---------------------------------------------
+#  saveRDS(myCellGraph, file = "cellGraph_meristem_full_T0.rds")
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  meshCellcenter <- myCellGraph$vertices[,c("label","x", "y", "z")]
 #  
-#  # An other way to define the cell centers without using the cell graph would be:
-#  vertexCellcenter <- purrr::map(1:ncol(myMesh$allColors$Col_label), ~
-#    myMesh$it[ which(myMesh$allColors$Col_label[,.x] == names(which(table(myMesh$allColors$Col_label[,.x]) == 1))), .x ]
-#  )
+#  # An other way to define the cell centers without using the cell graph would be: ## issue with the code below
+#  # vertexCellcenter <- purrr::map(1:ncol(myMesh$allColors$Col_label), ~
+#  #   myMesh$it[ which(myMesh$allColors$Col_label[,.x] == names(which(table(myMesh$allColors$Col_label[,.x]) == 1))), .x ]
+#  # )
 
 ## ----map3D, eval=FALSE---------------------------------------------------
 #  p1 <- plotlyMesh(meshExample = myMesh,

@@ -12,9 +12,9 @@
 
 <meta name="author" content="Marion Louveaux" />
 
-<meta name="date" content="2018-06-07" />
+<meta name="date" content="2018-06-10" />
 
-<title>Vignette mgx2r</title>
+<title>Vignette mgx2r - basics</title>
 
 
 
@@ -68,9 +68,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<h1 class="title toc-ignore">Vignette mgx2r</h1>
+<h1 class="title toc-ignore">Vignette mgx2r - basics</h1>
 <h4 class="author"><em>Marion Louveaux</em></h4>
-<h4 class="date"><em>2018-06-07</em></h4>
+<h4 class="date"><em>2018-06-10</em></h4>
 
 
 
@@ -85,50 +85,101 @@ N.B: this package also include a function to write an R 3D object as a .ply mesh
 <span class="kw">library</span>(dplyr)
 <span class="kw">library</span>(plotly)
 <span class="kw">library</span>(glue)
-<span class="kw">library</span>(RColorBrewer)
-
+<span class="kw">library</span>(RColorBrewer)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># devtools::install_github(&quot;marionlouveaux/cellviz3d&quot;)</span>
 <span class="kw">library</span>(cellviz3d)</code></pre></div>
 </div>
 <div id="loading-data" class="section level2">
 <h2>Loading data</h2>
-<p>Some .ply demonstration data coming from my PhD thesis are attached to this package and used here in the vignette. This dataset is a timelapse recording of the development of a WT shoot apical meristem expressing a membrane marker. I took one 3D stack every 12h and have 5 timepoints in total.</p>
+<p>Some .ply demonstration data coming from my PhD thesis are attached to this package and used here in the vignette. This dataset is a timelapse recording of the development of a shoot apical meristem of the plant  expressing a membrane marker. I took one 3D stack every 12h and have 5 timepoints in total. For more information regarding the generation of this dataset, see <code>help(&quot;mgx2r&quot;)</code>.</p>
 <p>Here, in this first vignette, we I will select the first timepoint only. I have one .ply for the mesh and one .ply for the cellGraph.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Choose one of the two datasets. Generating plots with the full dataset might be slow.</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">### Full datataset
+filePly &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;full/mesh/mesh_meristem_full_T0.ply&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;mgx2r&quot;</span>)
 
-### Full datataset
-filePly &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;full/normalMesh/2013-02-12_LTi6B_dis_A_T0_cells_minW1_normalMesh.ply&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;mgx2r&quot;</span>)
+fileCellGraph &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>,  <span class="st">&quot;full/cellGraph/cellGraph_meristem_full_T0.ply&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;mgx2r&quot;</span>)</code></pre></div>
+<p>As generating following plots with the full dataset might be slow, you can try with the cropped dataset.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">### Cropped dataset
+filePly &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;cropped/mesh/mesh_meristem_cropped_T0.ply&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;mgx2r&quot;</span>)
 
-fileCellGraph &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>,  <span class="st">&quot;full/cellGraph/2013-02-12_LTi6B_dis_A_T0_cells_minW1_cellGraph.ply&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;mgx2r&quot;</span>)
-
-
-### Cropped dataset
-filePly &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;cropped/normalMesh/2013-02-12_LTi6B_dis_A_T12h_cells_minW1_cropped_normalMesh.ply&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;mgx2r&quot;</span>)
-
-fileCellGraph &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>,  <span class="st">&quot;cropped/cellGraph/2013-02-12_LTi6B_dis_A_T12h_cells_minW1_cropped_cellGraph.ply&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;mgx2r&quot;</span>)</code></pre></div>
+fileCellGraph &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>,  <span class="st">&quot;cropped/cellGraph/cellGraph_meristem_cropped_T0.ply&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;mgx2r&quot;</span>)</code></pre></div>
 </div>
 <div id="mesh-and-cell-graph-e.g.cells-and-edges-properties" class="section level2">
 <h2>Mesh and cell graph (e.g. cells and edges properties)</h2>
 <p>I load the .ply mesh with the modified_read.ply() function. This function is a modified version of read.ply function from geomorph R package to specifically read MGX ply files. I takes in account the fact that each triangular face of the mesh can get several colors (one for the label, one for the fluorescent signal projected on the mesh -membrane or microtubules-…).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myMesh &lt;-<span class="st"> </span><span class="kw">read_mgxPly</span>(<span class="dt">file =</span> filePly, <span class="dt">ShowSpecimen =</span> <span class="ot">FALSE</span>, <span class="dt">addNormals =</span> <span class="ot">TRUE</span>,
-                               <span class="dt">MatCol=</span> <span class="dv">1</span>, <span class="dt">header_max =</span> <span class="dv">30</span>,
-                               <span class="dt">my_colors =</span> <span class="kw">c</span>(<span class="st">&quot;#800000&quot;</span>, <span class="st">&quot;#FF0000&quot;</span>, <span class="st">&quot;#808000&quot;</span>, <span class="st">&quot;#FFFF00&quot;</span>,
-                                             <span class="st">&quot;#008000&quot;</span>, <span class="st">&quot;#00FF00&quot;</span>, <span class="st">&quot;#008080&quot;</span>, <span class="st">&quot;#00FFFF&quot;</span>,
-                                             <span class="st">&quot;#000080&quot;</span>, <span class="st">&quot;#0000FF&quot;</span>, <span class="st">&quot;#800080&quot;</span>, <span class="st">&quot;#FF00FF&quot;</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mgx_palette &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;#800000&quot;</span>, <span class="st">&quot;#FF0000&quot;</span>, <span class="st">&quot;#808000&quot;</span>, <span class="st">&quot;#FFFF00&quot;</span>,
+                <span class="st">&quot;#008000&quot;</span>, <span class="st">&quot;#00FF00&quot;</span>, <span class="st">&quot;#008080&quot;</span>, <span class="st">&quot;#00FFFF&quot;</span>,
+                <span class="st">&quot;#000080&quot;</span>, <span class="st">&quot;#0000FF&quot;</span>, <span class="st">&quot;#800080&quot;</span>, <span class="st">&quot;#FF00FF&quot;</span>)
+
+myMesh &lt;-<span class="st"> </span><span class="kw">read_mgxPly</span>(
+  <span class="dt">file =</span> filePly, <span class="dt">ShowSpecimen =</span> <span class="ot">FALSE</span>, <span class="dt">addNormals =</span> <span class="ot">TRUE</span>,
+  <span class="dt">MatCol=</span> <span class="dv">1</span>, <span class="dt">header_max =</span> <span class="dv">30</span>,
+  <span class="dt">my_colors =</span> mgx_palette)
+<span class="co">#&gt; [1] &quot;Object has 7763 faces and 4158 vertices.&quot;</span>
+<span class="kw">str</span>(myMesh, <span class="dt">max.level =</span> <span class="dv">1</span>)
+<span class="co">#&gt; List of 7</span>
+<span class="co">#&gt;  $ vb           : num [1:4, 1:4158] -55 31.5 -3.2 1 -51.3 ...</span>
+<span class="co">#&gt;   ..- attr(*, &quot;dimnames&quot;)=List of 2</span>
+<span class="co">#&gt;  $ it           : num [1:3, 1:7763] 1 3040 3041 1 3041 ...</span>
+<span class="co">#&gt;   ..- attr(*, &quot;dimnames&quot;)=List of 2</span>
+<span class="co">#&gt;  $ primitivetype: chr &quot;triangle&quot;</span>
+<span class="co">#&gt;  $ material     :List of 2</span>
+<span class="co">#&gt;  $ allColors    :List of 4</span>
+<span class="co">#&gt;  $ it_label     :Classes 'tbl_df', 'tbl' and 'data.frame':   7763 obs. of  1 variable:</span>
+<span class="co">#&gt;  $ normals      : num [1:4, 1:4158] -0.322 0.196 0.906 1 -0.36 ...</span>
+<span class="co">#&gt;   ..- attr(*, &quot;dimnames&quot;)=List of 2</span>
+<span class="co">#&gt;  - attr(*, &quot;class&quot;)= chr [1:2] &quot;mesh3d&quot; &quot;shape3d&quot;</span></code></pre></div>
 <p>Over the rest of the vignette I will only show examples of visualisation with Plotly, but there is another 3D library in R called RGL.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rgl<span class="op">::</span><span class="kw">shade3d</span>(myMesh)</code></pre></div>
 <p>To change mesh color and display the new color, you can use the following command.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myMesh<span class="op">$</span>material<span class="op">$</span>color &lt;-<span class="st"> </span>myMesh<span class="op">$</span>allColors<span class="op">$</span>Col_signal
 rgl<span class="op">::</span><span class="kw">shade3d</span>(myMesh)</code></pre></div>
 <p>Information relative to cells and cell walls (resp. vertices and edges of the cell graph) are stored in a second .ply that I read with the modified_read.cellGraph() function that I wrote myself. The modified_read.cellGraph() function reads the cell graph .ply and extract two dataframes (one for the vertices informations and one for the edges informations). These two dataframes are then combined into a list.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myCellGraph &lt;-<span class="st"> </span><span class="kw">read_mgxCellGraph</span>(<span class="dt">fileCellGraph =</span> fileCellGraph_big, <span class="dt">header_max =</span> <span class="dv">30</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myCellGraph &lt;-<span class="st"> </span><span class="kw">read_mgxCellGraph</span>(<span class="dt">fileCellGraph =</span> fileCellGraph, <span class="dt">header_max =</span> <span class="dv">30</span>)
+myCellGraph
+<span class="co">#&gt; $vertices</span>
+<span class="co">#&gt; # A tibble: 376 x 15</span>
+<span class="co">#&gt;    label     x      y       z GeometryArea CellAxiscurv10microns</span>
+<span class="co">#&gt;    &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;        &lt;dbl&gt;                 &lt;int&gt;</span>
+<span class="co">#&gt;  1     3 -55.0  31.5  -3.20           33.5                     9</span>
+<span class="co">#&gt;  2     7 -51.3  18.6   0.0779         46.8                     9</span>
+<span class="co">#&gt;  3     6 -50.4  24.8  -0.0119         27.2                     9</span>
+<span class="co">#&gt;  4     5 -53.1  26.9  -1.39           19.7                     9</span>
+<span class="co">#&gt;  5     2 -51.4  37.0  -4.00           38.4                     9</span>
+<span class="co">#&gt;  6     1 -49.7  41.5  -6.23           35.4                     9</span>
+<span class="co">#&gt;  7    18 -46.9 -10.5  -6.18           40.5                     9</span>
+<span class="co">#&gt;  8    11 -48.0   6.85 -0.224          22.5                     9</span>
+<span class="co">#&gt;  9     8 -47.8  12.5   1.07           27.9                     9</span>
+<span class="co">#&gt; 10     4 -49.5  31.8  -1.64           28.1                     9</span>
+<span class="co">#&gt; # ... with 366 more rows, and 9 more variables:</span>
+<span class="co">#&gt; #   CellAxiscurv10microns.1 &lt;dbl&gt;, CellAxiscurv10microns.2 &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   CellAxiscurv10microns.3 &lt;dbl&gt;, CellAxiscurv10microns.4 &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   CellAxiscurv10microns.5 &lt;dbl&gt;, CellAxiscurv10microns.6 &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   CellAxiscurv10microns.7 &lt;dbl&gt;, CellAxiscurv10microns.8 &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   CellAxiscurv10microns.9 &lt;int&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $edges</span>
+<span class="co">#&gt; # A tibble: 2,160 x 2</span>
+<span class="co">#&gt;    source target</span>
+<span class="co">#&gt;     &lt;int&gt;  &lt;int&gt;</span>
+<span class="co">#&gt;  1      3      5</span>
+<span class="co">#&gt;  2      3      4</span>
+<span class="co">#&gt;  3      3      2</span>
+<span class="co">#&gt;  4      7      8</span>
+<span class="co">#&gt;  5      7      9</span>
+<span class="co">#&gt;  6      7     98</span>
+<span class="co">#&gt;  7      7      6</span>
+<span class="co">#&gt;  8      6      5</span>
+<span class="co">#&gt;  9      6      7</span>
+<span class="co">#&gt; 10      6     98</span>
+<span class="co">#&gt; # ... with 2,150 more rows</span></code></pre></div>
 <p>N.B.: to see the content of one of these function, just type its name without the parentheses.</p>
 <p>Last but not least, I am retrieving the location of the cell centers to display the cell ID at their location.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">meshCellcenter &lt;-<span class="st"> </span>myCellGraph<span class="op">$</span>vertices[,<span class="kw">c</span>(<span class="st">&quot;label&quot;</span>,<span class="st">&quot;x&quot;</span>, <span class="st">&quot;y&quot;</span>, <span class="st">&quot;z&quot;</span>)]
 
-<span class="co"># An other way to define the cell centers without using the cell graph would be:</span>
-vertexCellcenter &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw">map</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(myMesh<span class="op">$</span>allColors<span class="op">$</span>Col_label), <span class="op">~</span><span class="st"> </span>
-<span class="st">  </span>myMesh<span class="op">$</span>it[ <span class="kw">which</span>(myMesh<span class="op">$</span>allColors<span class="op">$</span>Col_label[,.x] <span class="op">==</span><span class="st"> </span><span class="kw">names</span>(<span class="kw">which</span>(<span class="kw">table</span>(myMesh<span class="op">$</span>allColors<span class="op">$</span>Col_label[,.x]) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>))), .x ]
-)</code></pre></div>
+<span class="co"># An other way to define the cell centers without using the cell graph would be: ## issue with the code below</span>
+<span class="co"># vertexCellcenter &lt;- purrr::map(1:ncol(myMesh$allColors$Col_label), ~ </span>
+<span class="co">#   myMesh$it[ which(myMesh$allColors$Col_label[,.x] == names(which(table(myMesh$allColors$Col_label[,.x]) == 1))), .x ]</span>
+<span class="co"># )</span></code></pre></div>
 </div>
 <div id="displaying-the-mesh-with-plotly" class="section level2">
 <h2>Displaying the mesh with plotly</h2>

@@ -52,8 +52,8 @@ cellGraph.all <- map(list.files(graph.dir, recursive = TRUE, full.names = TRUE),
 
 
 ```{r, eval=FALSE, echo=FALSE}
-saveRDS(mesh.all, file = "2013-02-12_LTi6B_dis_A_all_normalMesh_full.rds")
-saveRDS(cellGraph.all, file = "2013-02-12_LTi6B_dis_A_all_cellGraph_full.rds")
+saveRDS(mesh.all, file = "mesh_meristem_full_all.rds")
+saveRDS(cellGraph.all, file = "cellGraph_meristem_full_all.rds")
 ```
 
 
