@@ -3,6 +3,8 @@
 mgx2r
 =====
 
+<img src="https://github.com/statnmap/marionlouveaux/blob/master/img/mgx2r-logo.png" width="20%" />
+
 The goal of mgx2r is to ease the analysis of mesh and cell graph files created with the MorphoGraphX software. MorphoGraphX is a software for 3D visualisation and segmentation of microscopy images.
 
 Installation
@@ -24,9 +26,9 @@ Some .ply demonstration data coming from my PhD thesis are attached to this pack
 
 ``` r
 ### Full datataset
-filePly <- system.file("extdata", "full/normalMesh/2013-02-12_LTi6B_dis_A_T0_cells_minW1_normalMesh.ply", package = "mgx2r")
+filePly <- system.file("extdata", "full/mesh/mesh_meristem_full_T0.ply", package = "mgx2r")
 
-fileCellGraph <- system.file("extdata",  "full/cellGraph/2013-02-12_LTi6B_dis_A_T0_cells_minW1_cellGraph.ply", package = "mgx2r")
+fileCellGraph <- system.file("extdata",  "full/cellGraph/cellGraph_meristem_full_T0.ply", package = "mgx2r")
 ```
 
 The mesh data are read and converted as mesh 3D using the read\_mgxPly function. They contain informatons relative to the geometry of the plant tissue.

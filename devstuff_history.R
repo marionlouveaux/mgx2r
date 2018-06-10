@@ -26,3 +26,7 @@ usethis::use_news_md()
 
 # Vignette ----
 devtools::build_vignettes()
+
+
+# Add hex
+usethis::use_build_ignore("img/mgx2r_logo.png")
