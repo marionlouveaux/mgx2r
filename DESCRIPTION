@@ -27,3 +27,5 @@ Suggests:
     RColorBrewer,
     testthat
 VignetteBuilder: knitr
+URL: https://github.com/marionlouveaux/mgx2r
+BugReports: https://github.com/marionlouveaux/mgx2r/issues
