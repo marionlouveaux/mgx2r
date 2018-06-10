@@ -15,9 +15,7 @@
 #' @importFrom readr read_lines
 #' @importFrom rgl addNormals clear3d dot3d shade3d
 #' @importFrom tidyr separate
-#' @keywords .ply, read
 #' @export
-#' @examples
 #' @return Object of type mesh3D
 
 read_mgxPly <- function (file, ShowSpecimen = TRUE, addNormals = TRUE,

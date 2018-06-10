@@ -20,5 +20,3 @@ a .ply file readable by MorphoGraphX
 \description{
 Write a ply format for MorphoGraphX from a mesh3D R object
 }
-\keyword{mesh3D,}
-\keyword{ply}

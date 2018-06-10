@@ -9,16 +9,8 @@
 #' @importFrom purrr map map_dfr
 #' @importFrom tidyr separate
 #' @importFrom readr read_lines
-#' @keywords
 #' @export
-#' @examples
-#' @return
-
-# in read_cellGraph function:
-# ppty = ppty_vertices
-# file = fileCellGraph
-# toSkip = headerend + nvertices # to skip before starting to read
-# Nlines = nfaces # or nvertices
+#' @return A tibble.
 
 ucharHelp <- function(ppty,
                       file = file,
@@ -42,7 +34,7 @@ ucharHelp <- function(ppty,
       Name_i_tmp <- ppty_orig$Name[i]
 
       plymat_face_tmp <- tibble( X = read_lines(file = file,
-                                                skip = toSkip, # why here it is only headerend and not headerend+nvertices?
+                                                skip = toSkip,
                                                 n_max = 1 ) ) %>%
         map_dfr(~trimws(.)) %>% # to remove blank spaces before and after a line
         separate(sep = " ", col = X, into = ppty$Name, convert = TRUE,

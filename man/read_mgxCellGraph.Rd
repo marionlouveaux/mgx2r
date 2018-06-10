@@ -17,5 +17,3 @@ Object of type mesh3D
 \description{
 This function is a modified version of read.ply function from geomorph R package to specifically read MGX cell graph ply files.
 }
-\keyword{.ply,}
-\keyword{read}

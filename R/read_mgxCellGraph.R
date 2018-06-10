@@ -3,9 +3,7 @@
 #' This function is a modified version of read.ply function from geomorph R package to specifically read MGX cell graph ply files.
 #' @param fileCellGraph .ply Cell Graph file.
 #' @param header_max Number of lines expected in header. Must be equal or greater to the actual number of lines in the header. Default to 30.
-#' @keywords .ply, read
 #' @export
-#' @examples
 #' @return Object of type mesh3D
 
 read_mgxCellGraph <- function (fileCellGraph, header_max = 30)

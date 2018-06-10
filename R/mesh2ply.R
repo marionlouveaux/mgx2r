@@ -10,9 +10,7 @@
 #' @importFrom purrr map
 #' @importFrom snow makeCluster parApply stopCluster
 #' @importFrom utils write.table
-#' @keywords mesh3D, ply
 #' @export
-#' @examples
 #' @return a .ply file readable by MorphoGraphX
 
 mesh2ply <- function(mesh = mesh,
