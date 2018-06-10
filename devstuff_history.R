@@ -19,7 +19,7 @@ usethis::use_package("knitr", type = "Suggests")
 usethis::use_package("plotly", type = "Suggests")
 usethis::use_package("rmarkdown", type = "Suggests")
 usethis::use_package("RColorBrewer", type = "Suggests")
-usethis::use_package("cellviz3d", type = "Suggests")
+# usethis::use_package("cellviz3d", type = "Suggests")
 
 usethis::use_readme_rmd()
 usethis::use_news_md()

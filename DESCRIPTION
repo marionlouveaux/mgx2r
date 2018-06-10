@@ -25,6 +25,5 @@ Suggests:
     knitr,
     rmarkdown,
     RColorBrewer,
-    testthat,
-    cellviz3d
+    testthat
 VignetteBuilder: knitr
