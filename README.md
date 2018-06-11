@@ -3,7 +3,7 @@
 mgx2r
 =====
 
-<img src="https://github.com/statnmap/marionlouveaux/blob/master/img/mgx2r-logo.png" width="20%" />
+<img src="https://github.com/marionlouveaux/mgx2r/blob/master/img/mgx2r_logo.png" width="20%" />
 
 The goal of {mgx2r} is to ease the analysis of mesh and cell graph files created with the MorphoGraphX software. MorphoGraphX is a software for 3D visualisation and segmentation of microscopy images.
 
