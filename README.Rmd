@@ -69,7 +69,7 @@ The cell graph data are read and converted as mesh 3D using the read_mgxCellGrap
 myCellGraph <- read_mgxCellGraph(fileCellGraph = fileCellGraph, header_max = 30)
 ```
 
-### Visualise using {cellviz3d}
+### Visualise using {cellviz3d} 
 The mesh and cell graph data can be visualised using the package [{cellviz3d}](https://github.com/marionlouveaux/cellviz3d):
 ```{r map3D, eval=FALSE}
 library(cellviz3d)
