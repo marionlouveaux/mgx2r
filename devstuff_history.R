@@ -28,6 +28,10 @@ usethis::use_code_of_conduct()
 # Vignette ----
 devtools::build_vignettes()
 
+
+# Add hex
+usethis::use_build_ignore("img/mgx2r_logo.png")
+
 # GitHub ----
 usethis::browse_github_pat()
 usethis::edit_r_environ()
