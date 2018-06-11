@@ -42,7 +42,7 @@ library(cellviz3d)
 
 ## Loading data
 
-Some .ply demonstration data coming from my PhD thesis are attached to this package and used here in the vignette. This dataset is a timelapse recording of the development of a shoot apical meristem of the plant \emph{Arabidopsis thaliana} expressing a membrane marker. I took one 3D stack every 12h and have 5 timepoints in total. For more information regarding the generation of this dataset, see `help("mgx2r")`.     
+Some .ply demonstration data coming from my PhD thesis are attached to this package and used here in the vignette. This dataset is a timelapse recording of the development of a shoot apical meristem of the plant \emph{Arabidopsis thaliana} expressing a membrane marker. I took one 3D stack every 12h and have 5 timepoints in total. For more information regarding the generation of this dataset, see `help.search("mgx2r-package")`.     
 
 Here, in this first vignette, we I will select the first timepoint only. I have one .ply for the mesh and one .ply for the cellGraph.        
 ```{r myData, eval=TRUE}
@@ -73,8 +73,7 @@ mgx_palette <- c("#800000", "#FF0000", "#808000", "#FFFF00",
 
 myMesh <- read_mgxPly(
   file = filePly, ShowSpecimen = FALSE, addNormals = TRUE,
-  MatCol= 1, header_max = 30,
-  my_colors = mgx_palette)
+  MatCol = 1, header_max = 30, my_colors = mgx_palette)
 str(myMesh, max.level = 1)
 ```
 

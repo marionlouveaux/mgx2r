@@ -66,3 +66,5 @@ p1
 ```
 
 <img src="https://github.com/marionlouveaux/mgx2r/blob/master/inst/img/full/p1labels.png" width="100%" />
+
+Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
