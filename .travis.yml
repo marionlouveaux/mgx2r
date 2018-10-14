@@ -4,8 +4,12 @@ language: R
 sudo: false
 cache: packages
 
+
+before_install:
+  - export RGL_USE_NULL=TRUE
+
 r_github_packages:
-  - ThinkR-open/mgx2r  # pre-install to avoid vignette package errors
+  - marionlouveaux/mgx2r  # pre-install to avoid vignette package errors
 
 after_success:
   - Rscript -e 'pkgdown::build_site()'
