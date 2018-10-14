@@ -12,11 +12,13 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
+ [![Travis build status](https://travis-ci.org/marionlouveaux/mgx2r.svg?branch=master)](https://travis-ci.org/marionlouveaux/mgx2r) 
+ 
 # mgx2r
 
 
 ```{r, echo=FALSE, out.width="20%"}
-knitr::include_graphics("https://github.com/marionlouveaux/mgx2r/blob/master/img/mgx2r_logo.png")
+knitr::include_graphics("https://raw.githubusercontent.com/marionlouveaux/mgx2r/master/img/mgx2r_logo.png")
 ```
 
 The goal of {mgx2r} is to ease the analysis of mesh and cell graph files created with the MorphoGraphX software. MorphoGraphX is a software for 3D visualisation and segmentation of microscopy images.
@@ -84,7 +86,7 @@ p1
 ```
 
 ```{r echo=FALSE}
-knitr::include_graphics("https://github.com/marionlouveaux/mgx2r/blob/master/inst/img/full/p1labels.png")
+knitr::include_graphics("https://raw.githubusercontent.com/marionlouveaux/mgx2r/master/inst/img/full/p1labels.png")
 ```
 
 Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md).

@@ -5,9 +5,9 @@
 \title{A reading .ply Function}
 \usage{
 read_mgxPly(file, ShowSpecimen = TRUE, addNormals = TRUE, MatCol = 1,
-  header_max = 30, my_colors = c("#800000", "#FF0000", "#808000", "#FFFF00",
-  "#008000", "#00FF00", "#008080", "#00FFFF", "#000080", "#0000FF", "#800080",
-  "#FF00FF"))
+  header_max = 30, my_colors = c("#800000", "#FF0000", "#808000",
+  "#FFFF00", "#008000", "#00FF00", "#008080", "#00FFFF", "#000080",
+  "#0000FF", "#800080", "#FF00FF"))
 }
 \arguments{
 \item{file}{.ply file path. The .ply file stores information relative to a triangular mesh created with MorphoGraphX.}

@@ -1,31 +1,45 @@
 Package: mgx2r
-Title: Import mesh and cell graph files from MorphoGraphX software
-Version: 0.0.0.9000
-Authors@R: c(person("Marion", "Louveaux", email = "marion.louveaux@gmail.com", role = c("aut", "cre")),
-    person("Sébastien", "Rochette", email = "sebastien@thinkr.fr", role = c("aut")) )
-Description: Import mesh and cell graph files from MorphoGraphX software as tidy dataframes.
-    Propose visualization solutions for mesh and cell graph files from MorphoGraphX with Plotly and Shiny using the library cellviz3d.
+Title: Import mesh and cell graph files from MorphoGraphX
+    software
+Version: 0.0.2
+Authors@R: 
+    c(person(given = "Marion",
+             family = "Louveaux",
+             role = c("aut", "cre"),
+             email = "marion.louveaux@gmail.com"),
+      person(given = "Sébastien",
+             family = "Rochette",
+             role = "aut",
+             email = "sebastien@thinkr.fr"))
+Description: Import mesh and cell graph files from MorphoGraphX
+    software as tidy dataframes.  Propose visualization solutions for mesh
+    and cell graph files from MorphoGraphX with Plotly and Shiny using the
+    library cellviz3d.
 License: GPL-3
-Encoding: UTF-8
-LazyData: true
-RoxygenNote: 6.0.1
+URL: https://github.com/marionlouveaux/mgx2r
+BugReports: https://github.com/marionlouveaux/mgx2r/issues
 Imports: 
-    colorRamps,
     dplyr,
     glue,
+    grDevices,
     magrittr,
+    parallel,
     purrr,
     readr,
     rgl,
-    tibble,
-    tidyr,
     snow,
-    plotly
+    tidyr,
+    utils
 Suggests: 
+    colorRamps,
     knitr,
-    rmarkdown,
+    pkgdown,
+    plotly,
     RColorBrewer,
+    rmarkdown,
     testthat
-VignetteBuilder: knitr
-URL: https://github.com/marionlouveaux/mgx2r
-BugReports: https://github.com/marionlouveaux/mgx2r/issues
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0

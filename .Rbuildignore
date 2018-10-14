@@ -5,3 +5,5 @@
 ^README\.Rmd$
 ^img/mgx2r_logo\.png$
 ^CODE_OF_CONDUCT\.md$
+docs
+.travis.yml

@@ -3,22 +3,22 @@ usethis::use_pipe()
 usethis::use_gpl3_license(name = "Marion Louveaux")
 usethis::use_test("package")
 
-usethis::use_package("colorRamps")
-usethis::use_package("dplyr")
-usethis::use_package("glue")
-usethis::use_package("plotly")
-usethis::use_package("purrr")
-usethis::use_package("readr")
-usethis::use_package("rgl")
-usethis::use_package("tibble")
-usethis::use_package("tidyr")
-usethis::use_package("snow")
+# usethis::use_package("colorRamps")
+# usethis::use_package("dplyr")
+# usethis::use_package("glue")
+# usethis::use_package("plotly")
+# usethis::use_package("purrr")
+# usethis::use_package("readr")
+# usethis::use_package("rgl")
+# usethis::use_package("tibble")
+# usethis::use_package("tidyr")
+# usethis::use_package("snow")
 
 
-usethis::use_package("knitr", type = "Suggests")
-usethis::use_package("plotly", type = "Suggests")
-usethis::use_package("rmarkdown", type = "Suggests")
-usethis::use_package("RColorBrewer", type = "Suggests")
+# usethis::use_package("knitr", type = "Suggests")
+# usethis::use_package("plotly", type = "Suggests")
+# usethis::use_package("rmarkdown", type = "Suggests")
+# usethis::use_package("RColorBrewer", type = "Suggests")
 # usethis::use_package("cellviz3d", type = "Suggests")
 
 usethis::use_readme_rmd()
@@ -39,4 +39,10 @@ usethis::edit_r_environ()
 # https://github.com/settings/keys
 usethis::use_github()
 usethis::use_github_links()
+
+# Dependencies
+attachment::att_to_description(extra.suggests = "pkgdown")
+
+# Build vignettes
+devtools::build_vignettes()
 
