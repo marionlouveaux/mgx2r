@@ -14,7 +14,8 @@ editor_options:
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.align = "center"
 )
 ```
 
@@ -73,7 +74,10 @@ plotlyMesh_all(meshExample = mesh.all,
 ```
 
 ```{r echo=FALSE}
-knitr::include_graphics(system.file("img", "full/timeserie800ms.gif", package = "mgx2r"))
+silent <- file.copy(
+  system.file("img", "full/timeserie800ms.gif", package = "mgx2r"),
+  "timeserie800ms.gif")
+knitr::include_graphics("timeserie800ms.gif")
 ```
 
 

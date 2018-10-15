@@ -14,7 +14,8 @@ editor_options:
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.align = "center"
 )
 ```
 
@@ -133,7 +134,10 @@ p1
 ```
 
 ```{r echo=FALSE}
-knitr::include_graphics(system.file("img", "full/p1labels.png", package = "mgx2r"))
+silent <- file.copy(
+  system.file("img", "full/p1labels.png", package = "mgx2r"),
+  "p1labels.png")
+knitr::include_graphics("p1labels.png")
 ```
 Colors of the cell labels are set from the HEX color codes stored in `myMesh$allColors$Col_label`. There is always three colors: one per vertex. Two are identica, and usually black with MGX ("#000000" HEX code).      
 
@@ -150,7 +154,10 @@ plotlyMesh(meshExample = myMesh,
 ```
 
 ```{r echo=FALSE}
-knitr::include_graphics(system.file("img", "full/p1withoutlabels.png", package = "mgx2r"))
+silent <- file.copy(
+  system.file("img", "full/p1withoutlabels.png", package = "mgx2r"),
+  "p1withoutlabels.png")
+knitr::include_graphics("p1withoutlabels.png")
 ```
 
 Default color of the mesh and opacity are set in the defaultColor parameter of the plotlyMesh() function (see ?plotlyMesh for more informations).
@@ -176,7 +183,10 @@ p2
 ```
 
 ```{r echo=FALSE}
-knitr::include_graphics(system.file("img", "full/p2heatmap.png", package = "mgx2r"))
+silent <- file.copy(
+  system.file("img", "full/p2heatmap.png", package = "mgx2r"),
+  "p2heatmap.png")
+knitr::include_graphics("p2heatmap.png")
 ```
 
 
@@ -200,7 +210,10 @@ show_tensors(p = meshPlotly,
 ```
 
 ```{r echo=FALSE}
-knitr::include_graphics(system.file("img", "full/tensors.png", package = "mgx2r"))
+silent <- file.copy(
+  system.file("img", "full/tensors.png", package = "mgx2r"),
+  "tensors.png")
+knitr::include_graphics("tensors.png")
 ```
 
 
@@ -221,7 +234,10 @@ show_cellcontour(p = meshPlotly, mesh = myMesh)
 ```
 
 ```{r echo=FALSE}
-knitr::include_graphics(system.file("img", "full/contour.png", package = "mgx2r"))
+silent <- file.copy(
+  system.file("img", "full/contour.png", package = "mgx2r"),
+  "contour.png")
+knitr::include_graphics("contour.png")
 ```
 
 

@@ -1,14 +1,18 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-mgx2r
-=====
 
-<img src="https://github.com/marionlouveaux/mgx2r/blob/master/img/mgx2r_logo.png" width="20%" />
+[![Travis build
+status](https://travis-ci.org/marionlouveaux/mgx2r.svg?branch=master)](https://travis-ci.org/marionlouveaux/mgx2r)
 
-The goal of {mgx2r} is to ease the analysis of mesh and cell graph files created with the MorphoGraphX software. MorphoGraphX is a software for 3D visualisation and segmentation of microscopy images.
+# mgx2r
 
-Installation
-------------
+<img src="https://raw.githubusercontent.com/marionlouveaux/mgx2r/master/img/mgx2r_logo.png" width="20%" />
+
+The goal of {mgx2r} is to ease the analysis of mesh and cell graph files
+created with the MorphoGraphX software. MorphoGraphX is a software for
+3D visualisation and segmentation of microscopy images.
+
+## Installation
 
 You can install the released version of {mgx2r} from GitHub
 
@@ -20,20 +24,24 @@ devtools::install_github("marionlouveaux/mgx2r",
   build_vignettes = TRUE)
 ```
 
-Vignettes
----------
+## Vignettes
 
-Two vignettes are available in the package. You can have access to the vignettes if you installed the package using `build_vignettes = TRUE`.
+Two vignettes are available in the package. You can have access to the
+vignettes if you installed the package using `build_vignettes = TRUE`.
 
--   `vignette("vignette_basics", package = "mgx2r")`
--   `vignette("vignette_time_series", package = "mgx2r")`
+  - `vignette("vignette_basics", package = "mgx2r")`
+  - `vignette("vignette_time_series", package = "mgx2r")`
 
-Example
--------
+## Example
 
 ### Read dataset
 
-Some .ply demonstration data coming from my PhD thesis are attached to this package. This dataset is a timelapse recording of the development of a shoot apical meristem of the plant expressing a membrane marker. I took one 3D stack every 12h and have 5 timepoints in total. For more information regarding the generation of this dataset, see `help.search("mgx2r-package")`.
+Some .ply demonstration data coming from my PhD thesis are attached to
+this package. This dataset is a timelapse recording of the development
+of a shoot apical meristem of the plant  expressing a membrane marker. I
+took one 3D stack every 12h and have 5 timepoints in total. For more
+information regarding the generation of this dataset, see
+`help.search("mgx2r-package")`.
 
 ``` r
 ### Full datataset
@@ -42,7 +50,9 @@ filePly <- system.file("extdata", "full/mesh/mesh_meristem_full_T0.ply", package
 fileCellGraph <- system.file("extdata",  "full/cellGraph/cellGraph_meristem_full_T0.ply", package = "mgx2r")
 ```
 
-The mesh data are read and converted as mesh 3D using the read\_mgxPly function. They contain informatons relative to the geometry of the plant tissue.
+The mesh data are read and converted as mesh 3D using the read\_mgxPly
+function. They contain informatons relative to the geometry of the plant
+tissue.
 
 ``` r
 library(mgx2r)
@@ -56,7 +66,10 @@ myMesh <- read_mgxPly(
 #> [1] "Object has 7763 faces and 4158 vertices."
 ```
 
-The cell graph data are read and converted as mesh 3D using the read\_mgxCellGraph function. They contain data relative to the area of the cells and local curvature of the tissue.
+The cell graph data are read and converted as mesh 3D using the
+read\_mgxCellGraph function. They contain data relative to the area of
+the cells and local curvature of the
+tissue.
 
 ``` r
 myCellGraph <- read_mgxCellGraph(fileCellGraph = fileCellGraph, header_max = 30)
@@ -64,7 +77,8 @@ myCellGraph <- read_mgxCellGraph(fileCellGraph = fileCellGraph, header_max = 30)
 
 ### Visualise using {cellviz3d}
 
-The mesh and cell graph data can be visualised using the package [{cellviz3d}](https://github.com/marionlouveaux/cellviz3d):
+The mesh and cell graph data can be visualised using the package
+[{cellviz3d}](https://github.com/marionlouveaux/cellviz3d):
 
 ``` r
 library(cellviz3d)
@@ -78,6 +92,8 @@ p1 <- plotlyMesh(meshExample = myMesh,
 p1
 ```
 
-<img src="https://github.com/marionlouveaux/mgx2r/blob/master/inst/img/full/p1labels.png" width="100%" />
+<img src="https://raw.githubusercontent.com/marionlouveaux/mgx2r/master/inst/img/full/p1labels.png" width="100%" />
 
-Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+Please note that this project is released with a [Contributor Code of
+Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree
+to abide by its terms.
