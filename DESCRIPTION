@@ -6,11 +6,13 @@ Authors@R:
     c(person(given = "Marion",
              family = "Louveaux",
              role = c("aut", "cre"),
-             email = "marion.louveaux@gmail.com"),
+             email = "marion.louveaux@gmail.com",
+             comment = c(ORCID = "0000-0002-1794-3748")),
       person(given = "Sébastien",
              family = "Rochette",
              role = "aut",
-             email = "sebastien@thinkr.fr"))
+             email = "sebastien@thinkr.fr",
+             comment = c(ORCID = "0000-0002-1565-9313")))
 Description: Import mesh and cell graph files from MorphoGraphX
     software as tidy dataframes.  Propose visualization solutions for mesh
     and cell graph files from MorphoGraphX with Plotly and Shiny using the
