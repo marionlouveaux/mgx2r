@@ -1,0 +1,7 @@
+pandoc: '2.2'
+pkgdown: 1.1.0
+pkgdown_sha: ~
+articles:
+  vignette_basics: vignette_basics.html
+  vignette_time_series: vignette_time_series.html
+
