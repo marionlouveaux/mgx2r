@@ -105,31 +105,34 @@
 <a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">library</span>(mgx2r)</a>
 <a class="sourceLine" id="cb1-6" data-line-number="6"></a>
 <a class="sourceLine" id="cb1-7" data-line-number="7"><span class="kw">library</span>(cellviz3d)</a></code></pre></div>
+<p>To install {cellviz3d}:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># devtools::install_github("marionlouveaux/cellviz3d")</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">library</span>(cellviz3d)</a></code></pre></div>
 </div>
 <div id="data-all-meshes-from-one-individual" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data-all-meshes-from-one-individual" class="anchor"></a>Data (all meshes from one individual)</h2>
 <p>Some .ply demonstration data coming from my PhD thesis are attached to this package and used here in the vignette. This dataset is a timelapse recording of the development of a WT shoot apical meristem expressing a membrane marker. I took one 3D stack every 12h and have 5 timepoints in total. Here I load the .ply and cell graph .ply for all the timepoints of this timelapse recording.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">ply.dir &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"full/normalMesh/"</span>, <span class="dt">package =</span> <span class="st">"mgx2r"</span>)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">mesh.all &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/purrr/topics/map">map</a></span>(<span class="kw">list.files</span>(ply.dir, <span class="dt">recursive =</span> <span class="ot">TRUE</span>, <span class="dt">full.names =</span> <span class="ot">TRUE</span>),</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">                <span class="op">~</span><span class="st"> </span><span class="kw"><a href="../reference/read_mgxPly.html">read_mgxPly</a></span>(<span class="dt">file =</span> .x, <span class="dt">ShowSpecimen =</span> <span class="ot">FALSE</span>))</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7">graph.dir &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"full/cellGraph/"</span>, <span class="dt">package =</span> <span class="st">"mgx2r"</span>)</a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9">cellGraph.all &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/purrr/topics/map">map</a></span>(<span class="kw">list.files</span>(graph.dir, <span class="dt">recursive =</span> <span class="ot">TRUE</span>, <span class="dt">full.names =</span> <span class="ot">TRUE</span>), <span class="op">~</span><span class="kw"><a href="../reference/read_mgxCellGraph.html">read_mgxCellGraph</a></span>(<span class="dt">fileCellGraph =</span> .x, <span class="dt">header_max =</span> <span class="dv">30</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">ply.dir &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"full/normalMesh/"</span>, <span class="dt">package =</span> <span class="st">"mgx2r"</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">mesh.all &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/purrr/topics/map">map</a></span>(<span class="kw">list.files</span>(ply.dir, <span class="dt">recursive =</span> <span class="ot">TRUE</span>, <span class="dt">full.names =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">                <span class="op">~</span><span class="st"> </span><span class="kw"><a href="../reference/read_mgxPly.html">read_mgxPly</a></span>(<span class="dt">file =</span> .x, <span class="dt">ShowSpecimen =</span> <span class="ot">FALSE</span>))</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7">graph.dir &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"full/cellGraph/"</span>, <span class="dt">package =</span> <span class="st">"mgx2r"</span>)</a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9">cellGraph.all &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/purrr/topics/map">map</a></span>(<span class="kw">list.files</span>(graph.dir, <span class="dt">recursive =</span> <span class="ot">TRUE</span>, <span class="dt">full.names =</span> <span class="ot">TRUE</span>), <span class="op">~</span><span class="kw"><a href="../reference/read_mgxCellGraph.html">read_mgxCellGraph</a></span>(<span class="dt">fileCellGraph =</span> .x, <span class="dt">header_max =</span> <span class="dv">30</span>))</a></code></pre></div>
 </div>
 <div id="plotly-with-slider" class="section level2">
 <h2 class="hasAnchor">
 <a href="#plotly-with-slider" class="anchor"></a>Plotly with slider</h2>
 <p>In plotly, the slider option allows to visualise several graphs linked by a time variable.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">meshColors.all &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="ot">NULL</span>, <span class="ot">NULL</span>, <span class="ot">NULL</span>, <span class="ot">NULL</span>, <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw">plotlyMesh_all</span>(<span class="dt">meshExample =</span> mesh.all,</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">                       <span class="dt">graphExample =</span> cellGraph.all,</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">                       <span class="dt">meshColors =</span> meshColors.all,</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">                       <span class="dt">display =</span> <span class="st">'heatmap'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">meshColors.all &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="ot">NULL</span>, <span class="ot">NULL</span>, <span class="ot">NULL</span>, <span class="ot">NULL</span>, <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw"><a href="http://www.rdocumentation.org/packages/cellviz3d/topics/plotlyMesh_all">plotlyMesh_all</a></span>(<span class="dt">meshExample =</span> mesh.all,</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">                       <span class="dt">graphExample =</span> cellGraph.all,</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">                       <span class="dt">meshColors =</span> meshColors.all,</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">                       <span class="dt">display =</span> <span class="st">'heatmap'</span>)</a></code></pre></div>
 <p><img src="timeserie800ms.gif" style="display: block; margin: auto;"></p>
 </div>
   </div>

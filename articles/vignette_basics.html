@@ -107,6 +107,7 @@ N.B: this package also include a function to write an R 3D object as a .ply mesh
 <a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">library</span>(plotly)</a>
 <a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw">library</span>(glue)</a>
 <a class="sourceLine" id="cb1-7" data-line-number="7"><span class="kw">library</span>(RColorBrewer)</a></code></pre></div>
+<p>To install {cellviz3d}:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># devtools::install_github("marionlouveaux/cellviz3d")</span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">library</span>(cellviz3d)</a></code></pre></div>
 </div>
@@ -209,7 +210,7 @@ N.B: this package also include a function to write an R 3D object as a .ply mesh
 <div id="to-display-the-mesh-with-cell-labels" class="section level3">
 <h3 class="hasAnchor">
 <a href="#to-display-the-mesh-with-cell-labels" class="anchor"></a>To display the mesh with cell labels</h3>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">p1 &lt;-<span class="st"> </span><span class="kw">plotlyMesh</span>(<span class="dt">meshExample =</span> myMesh,</a>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">p1 &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/cellviz3d/topics/plotlyMesh">plotlyMesh</a></span>(<span class="dt">meshExample =</span> myMesh,</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">                 <span class="dt">meshColors =</span> myMesh<span class="op">$</span>allColors<span class="op">$</span>Col_label,</a>
 <a class="sourceLine" id="cb10-3" data-line-number="3">                 <span class="dt">meshCellcenter =</span> meshCellcenter) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/plotly/topics/layout">layout</a></span>(<span class="dt">scene =</span></a>
@@ -223,7 +224,7 @@ N.B: this package also include a function to write an R 3D object as a .ply mesh
 <div id="without-the-cell-labels" class="section level3">
 <h3 class="hasAnchor">
 <a href="#without-the-cell-labels" class="anchor"></a>Without the cell labels</h3>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">plotlyMesh</span>(<span class="dt">meshExample =</span> myMesh,</a>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="http://www.rdocumentation.org/packages/cellviz3d/topics/plotlyMesh">plotlyMesh</a></span>(<span class="dt">meshExample =</span> myMesh,</a>
 <a class="sourceLine" id="cb11-2" data-line-number="2">           <span class="dt">meshColors =</span> <span class="ot">NULL</span>,</a>
 <a class="sourceLine" id="cb11-3" data-line-number="3">           <span class="dt">meshCellcenter =</span> meshCellcenter)<span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/plotly/topics/layout">layout</a></span>(<span class="dt">scene =</span></a>
@@ -241,7 +242,7 @@ N.B: this package also include a function to write an R 3D object as a .ply mesh
 <div id="scalar-info-area-growth-rate" class="section level3">
 <h3 class="hasAnchor">
 <a href="#scalar-info-area-growth-rate" class="anchor"></a>Scalar info (area, growth rate…)</h3>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">p2 &lt;-<span class="st"> </span><span class="kw">plotlyMesh</span>(<span class="dt">meshExample =</span> myMesh, </a>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">p2 &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/cellviz3d/topics/plotlyMesh">plotlyMesh</a></span>(<span class="dt">meshExample =</span> myMesh, </a>
 <a class="sourceLine" id="cb12-2" data-line-number="2">           <span class="dt">meshColors =</span> <span class="kw"><a href="http://dplyr.tidyverse.org/reference/join.html">left_join</a></span>(myMesh<span class="op">$</span>it_label, myCellGraph<span class="op">$</span>vertices) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-3" data-line-number="3"><span class="st">             </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/select.html">select</a></span>(., GeometryArea),</a>
 <a class="sourceLine" id="cb12-4" data-line-number="4">           <span class="dt">meshCellcenter =</span>  meshCellcenter</a>
@@ -257,7 +258,7 @@ N.B: this package also include a function to write an R 3D object as a .ply mesh
 <h3 class="hasAnchor">
 <a href="#vectortensor-info-principal-dir-of-curvature" class="anchor"></a>Vector/tensor info (principal dir of curvature…)</h3>
 <p>This part of the code is quite new and provide tools to visualise tensors, such as growth direction or curvature direction on any kind of mesh (without label, with cell label, with heatmap colors…), as long as it is already converted to a plot with plotlyMesh. The code below has not been tested extensively yet.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">meshPlotly &lt;-<span class="st"> </span><span class="kw">plotlyMesh</span>(<span class="dt">meshExample =</span> myMesh, </a>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">meshPlotly &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/cellviz3d/topics/plotlyMesh">plotlyMesh</a></span>(<span class="dt">meshExample =</span> myMesh, </a>
 <a class="sourceLine" id="cb13-2" data-line-number="2">                <span class="dt">meshColors =</span> <span class="ot">NULL</span>,</a>
 <a class="sourceLine" id="cb13-3" data-line-number="3">                <span class="dt">meshCellcenter =</span> meshCellcenter) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb13-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/plotly/topics/layout">layout</a></span>(<span class="dt">scene =</span></a>
@@ -265,7 +266,7 @@ N.B: this package also include a function to write an R 3D object as a .ply mesh
 <a class="sourceLine" id="cb13-6" data-line-number="6">             <span class="dt">aspectmode =</span> <span class="st">"data"</span></a>
 <a class="sourceLine" id="cb13-7" data-line-number="7">           ))</a>
 <a class="sourceLine" id="cb13-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="kw">show_tensors</span>(<span class="dt">p =</span> meshPlotly,</a>
+<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="kw"><a href="http://www.rdocumentation.org/packages/cellviz3d/topics/show_tensors">show_tensors</a></span>(<span class="dt">p =</span> meshPlotly,</a>
 <a class="sourceLine" id="cb13-10" data-line-number="10">             <span class="dt">cellGraph =</span> myCellGraph,</a>
 <a class="sourceLine" id="cb13-11" data-line-number="11">             <span class="dt">tensor_name =</span> <span class="st">"CellAxiscurv10microns"</span>,</a>
 <a class="sourceLine" id="cb13-12" data-line-number="12">             <span class="dt">scale =</span> <span class="dv">50</span>)</a></code></pre></div>
@@ -276,14 +277,14 @@ N.B: this package also include a function to write an R 3D object as a .ply mesh
 <h2 class="hasAnchor">
 <a href="#drawing-cell-contours" class="anchor"></a>Drawing cell contours</h2>
 <p>As some may be also interested by drawing the cell contours, I have added an example here. This kind of graph is quite ressource consuming, as it is drawing each edge one by one, as a segment. Here in this example, there is 5151 edges. This could be useful if you are looking at the accumulation of a given protein (for instance PIN1) at the membrane. The information would be stored in the edges dataframe of the cell graph and I could use it to make a heatmap on the cell contours.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">meshPlotly &lt;-<span class="st"> </span><span class="kw">plotlyMesh</span>(<span class="dt">meshExample =</span> myMesh,</a>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">meshPlotly &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/cellviz3d/topics/plotlyMesh">plotlyMesh</a></span>(<span class="dt">meshExample =</span> myMesh,</a>
 <a class="sourceLine" id="cb14-2" data-line-number="2">           <span class="dt">meshColors =</span> <span class="ot">NULL</span>) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb14-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/plotly/topics/layout">layout</a></span>(<span class="dt">scene =</span></a>
 <a class="sourceLine" id="cb14-4" data-line-number="4">           <span class="kw">list</span>(</a>
 <a class="sourceLine" id="cb14-5" data-line-number="5">             <span class="dt">aspectmode =</span> <span class="st">"data"</span></a>
 <a class="sourceLine" id="cb14-6" data-line-number="6">           ))</a>
 <a class="sourceLine" id="cb14-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="kw">show_cellcontour</span>(<span class="dt">p =</span> meshPlotly, <span class="dt">mesh =</span> myMesh)</a></code></pre></div>
+<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="kw"><a href="http://www.rdocumentation.org/packages/cellviz3d/topics/show_cellcontour">show_cellcontour</a></span>(<span class="dt">p =</span> meshPlotly, <span class="dt">mesh =</span> myMesh)</a></code></pre></div>
 <p><img src="contour.png" style="display: block; margin: auto;"></p>
 </div>
   </div>

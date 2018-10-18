@@ -160,7 +160,7 @@
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">library</span>(cellviz3d)</a>
 <a class="sourceLine" id="cb5-2" data-line-number="2">meshCellcenter &lt;-<span class="st"> </span>myCellGraph<span class="op">$</span>vertices[,<span class="kw">c</span>(<span class="st">"label"</span>,<span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"z"</span>)]</a>
 <a class="sourceLine" id="cb5-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4">p1 &lt;-<span class="st"> </span><span class="kw">plotlyMesh</span>(<span class="dt">meshExample =</span> myMesh,</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">p1 &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/cellviz3d/topics/plotlyMesh">plotlyMesh</a></span>(<span class="dt">meshExample =</span> myMesh,</a>
 <a class="sourceLine" id="cb5-5" data-line-number="5">                 <span class="dt">meshColors =</span> myMesh<span class="op">$</span>allColors<span class="op">$</span>Col_label,</a>
 <a class="sourceLine" id="cb5-6" data-line-number="6">                 <span class="dt">meshCellcenter =</span> meshCellcenter) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb5-7" data-line-number="7"><span class="st">  </span>plotly<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/plotly/topics/layout">layout</a></span>(<span class="dt">scene =</span> <span class="kw">list</span>(<span class="dt">aspectmode =</span> <span class="st">"data"</span>))</a>
@@ -217,6 +217,7 @@
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://travis-ci.org/marionlouveaux/mgx2r"><img src="https://travis-ci.org/marionlouveaux/mgx2r.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://ci.appveyor.com/project/marionlouveaux/mgx2r"><img src="https://ci.appveyor.com/api/projects/status/github/marionlouveaux/mgx2r?branch=master&amp;svg=true" alt="AppVeyor build status"></a></li>
 <li><a href="https://zenodo.org/badge/latestdoi/136828022"><img src="https://zenodo.org/badge/136828022.svg" alt="DOI"></a></li>
 </ul>
 </div>
