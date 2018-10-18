@@ -1,15 +1,15 @@
 citHeader("To cite mgx2r in publications use:")
 
 citEntry(entry = "misc",
-  title        = "mgx2r: A R-package to import mesh and cell graph files from MorphoGraphX software.",
+  title        = "mgx2r: a R package for importing meshes and cell graph files from MorphoGraphX software.",
   author       = personList(as.person("Marion Louveaux"), as.person("Sébastien Rochette")),
   journal      = "Zenodo",
   year         = "2018",
-  url          = "http://doi.org/",
+  url          = "http://doi.org/10.5281/zenodo.1466047",
 
   textVersion  =
-  paste("Marion Louveaux, Sébastien Rochette. (2018, October 15).",
-        "mgx2r: A R-package to import mesh and cell graph files from MorphoGraphX software.",
+  paste("Marion Louveaux, Sébastien Rochette. (2018, October 18).",
+        "mgx2r: a R package for importing meshes and cell graph files from MorphoGraphX software (Version v0.0.2).",
         "Zenodo.",
-        "http://doi.org/")
+        "http://doi.org/10.5281/zenodo.1466047")
 )

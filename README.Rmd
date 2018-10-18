@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
- [![Travis build status](https://travis-ci.org/marionlouveaux/mgx2r.svg?branch=master)](https://travis-ci.org/marionlouveaux/mgx2r) 
+ [![Travis build status](https://travis-ci.org/marionlouveaux/mgx2r.svg?branch=master)](https://travis-ci.org/marionlouveaux/mgx2r) [![DOI](https://zenodo.org/badge/136828022.svg)](https://zenodo.org/badge/latestdoi/136828022)
  
 # mgx2r
 
@@ -21,8 +21,13 @@ knitr::opts_chunk$set(
 knitr::include_graphics("https://raw.githubusercontent.com/marionlouveaux/mgx2r/master/img/mgx2r_logo.png")
 ```
 
-The goal of {mgx2r} is to ease the analysis of mesh and cell graph files created with the MorphoGraphX software. MorphoGraphX is a software for 3D visualisation and segmentation of microscopy images.
+The goal of {mgx2r} is to ease the analysis of mesh and cell graph files created with the MorphoGraphX software. [MorphoGraphX](http://www.mpipz.mpg.de/MorphoGraphX) is a software for 3D visualisation and segmentation of microscopy images.
 
+## How to cite
+
+To cite {mgx2r}, call the R built-in command `citation("mgx2r")`.   
+
+> Marion Louveaux, & Sébastien Rochette. (2018, October 18). marionlouveaux/mgx2r: mgx2r: a R package for importing meshes and cell graph files from MorphoGraphX software (Version v0.0.2). Zenodo. http://doi.org/10.5281/zenodo.1466047
 
 ## Installation
 
@@ -35,6 +40,10 @@ devtools::install_github("marionlouveaux/mgx2r")
 devtools::install_github("marionlouveaux/mgx2r",
   build_vignettes = TRUE)
 ```
+
+## Full documentation with {pkgdown}
+
+See full documentation created with {pkgdown} at https://marionlouveaux.github.io/mgx2r/
 
 ## Vignettes
 
@@ -88,6 +97,12 @@ p1
 ```{r echo=FALSE}
 knitr::include_graphics("https://raw.githubusercontent.com/marionlouveaux/mgx2r/master/inst/img/full/p1labels.png")
 ```
+
+## Acknowledgements
+
+Many thanks to Dr. Soeren Strauss and Dr. Richard Smith from the Max Planck Institute for Breeding Research for their help and advices on the {mgx2r} package. 
+
+## Code of conduct
 
 Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
   By participating in this project you agree to abide by its terms.

@@ -1,7 +1,7 @@
 Package: mgx2r
 Title: Import mesh and cell graph files from MorphoGraphX
     software
-Version: 0.0.2
+Version: 0.0.2.9000
 Authors@R: 
     c(person(given = "Marion",
              family = "Louveaux",
