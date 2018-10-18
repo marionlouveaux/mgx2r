@@ -20,6 +20,7 @@ Description: Import mesh and cell graph files from MorphoGraphX
 License: GPL-3
 URL: https://github.com/marionlouveaux/mgx2r
 BugReports: https://github.com/marionlouveaux/mgx2r/issues
+Remotes: marionlouveaux/cellviz3d
 Imports: 
     dplyr,
     glue,
@@ -33,6 +34,7 @@ Imports:
     tidyr,
     utils
 Suggests: 
+    cellviz3d,
     colorRamps,
     knitr,
     pkgdown,

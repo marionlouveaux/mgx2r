@@ -36,6 +36,7 @@ library(glue)
 library(RColorBrewer)
 ```
 
+To install {cellviz3d}:
 ```{r libdev, warning = FALSE, message = FALSE, eval=FALSE}
 # devtools::install_github("marionlouveaux/cellviz3d")
 library(cellviz3d)

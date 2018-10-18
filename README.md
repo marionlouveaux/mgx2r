@@ -1,6 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Travis build status](https://travis-ci.org/marionlouveaux/mgx2r.svg?branch=master)](https://travis-ci.org/marionlouveaux/mgx2r) [![DOI](https://zenodo.org/badge/136828022.svg)](https://zenodo.org/badge/latestdoi/136828022)
+[![Travis build status](https://travis-ci.org/marionlouveaux/mgx2r.svg?branch=master)](https://travis-ci.org/marionlouveaux/mgx2r) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/marionlouveaux/mgx2r?branch=master&svg=true)](https://ci.appveyor.com/project/marionlouveaux/mgx2r) [![DOI](https://zenodo.org/badge/136828022.svg)](https://zenodo.org/badge/latestdoi/136828022)
 
 mgx2r
 =====

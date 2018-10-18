@@ -24,7 +24,7 @@ The goal of this vignette is to highlight the power of R and Plotly regarding th
 
 ## Librairies
 
-```{r, warning = FALSE, message = FALSE, eval=FALSE}
+```{r, warning = FALSE, message = FALSE}
 library(colorRamps)
 library(dplyr)
 library(plotly)
@@ -34,6 +34,11 @@ library(mgx2r)
 library(cellviz3d)
 ```
 
+To install {cellviz3d}:
+```{r libdev, warning = FALSE, message = FALSE, eval=FALSE}
+# devtools::install_github("marionlouveaux/cellviz3d")
+library(cellviz3d)
+```
 
 ## Data (all meshes from one individual)
 

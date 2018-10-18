@@ -10,6 +10,7 @@ before_install:
 
 r_github_packages:
   - marionlouveaux/mgx2r  # pre-install to avoid vignette package errors
+  - marionlouveaux/cellviz3d
 
 after_success:
   - Rscript -e 'pkgdown::build_site()'
