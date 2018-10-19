@@ -42,6 +42,13 @@ Two vignettes are available in the package. You can have access to the vignettes
 -   `vignette("vignette_basics", package = "mgx2r")`
 -   `vignette("vignette_time_series", package = "mgx2r")`
 
+To open the Rmd files used to build vignettes:
+
+``` r
+file.edit(system.file(file.path("doc", "vignette_basics.Rmd"), package = "mgx2r"))
+file.edit(system.file(file.path("doc", "vignette_time_series.Rmd"), package = "mgx2r"))
+```
+
 Example
 -------
 
