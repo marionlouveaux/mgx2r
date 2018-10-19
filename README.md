@@ -14,7 +14,7 @@ How to cite
 
 To cite {mgx2r}, call the R built-in command `citation("mgx2r")`.
 
-> Marion Louveaux, & Sébastien Rochette. (2018, October 18). marionlouveaux/mgx2r: mgx2r: a R package for importing meshes and cell graph files from MorphoGraphX software (Version v0.0.2). Zenodo. <http://doi.org/10.5281/zenodo.1466047>
+> Marion Louveaux, & Sébastien Rochette. (2018, October 18). mgx2r: a R package for importing meshes and cell graph files from MorphoGraphX software (Version v0.0.2). Zenodo. <http://doi.org/10.5281/zenodo.1466047>
 
 Installation
 ------------
